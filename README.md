@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/architecture.svg" alt="aster-ho architecture" width="720" />
+</p>
+
 <h1 align="center">aster-ho</h1>
 
 <p align="center">
