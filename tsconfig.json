@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "references": [
+    { "path": "packages/sdk" },
+    { "path": "packages/tool-normalize" },
+    { "path": "packages/instrumentation-openai" },
+    { "path": "packages/exporter-langfuse" },
+    { "path": "packages/enricher-cost" }
+  ]
+}
