@@ -1,0 +1,5 @@
+service_name: 123
+enrichers: "not-an-array"
+exporters:
+  unknown_exporter:
+    enabled: true

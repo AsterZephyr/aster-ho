@@ -1,0 +1,17 @@
+{
+  "task_id": "reverse-hash",
+  "run_id": "metr-run-001",
+  "agent": "claude-agent-v1",
+  "score": 0.75,
+  "max_score": 1.0,
+  "duration_s": 120,
+  "exec_results": [
+    { "command": "python solve.py", "exit_code": 0, "stdout": "Found solution", "duration_ms": 5000, "timestamp": "2025-01-01T00:00:10Z" },
+    { "command": "python verify.py", "exit_code": 1, "stderr": "Verification failed on case 3", "duration_ms": 2000, "timestamp": "2025-01-01T00:01:00Z" },
+    { "command": "python solve.py --retry", "exit_code": 0, "stdout": "Retry successful", "duration_ms": 8000, "timestamp": "2025-01-01T00:01:30Z" }
+  ],
+  "intermediate_scores": [
+    { "value": 0.5, "timestamp": "2025-01-01T00:00:30Z", "message": "Partial solution found" },
+    { "value": 0.75, "timestamp": "2025-01-01T00:01:50Z", "message": "Final score" }
+  ]
+}

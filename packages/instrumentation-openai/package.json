@@ -13,18 +13,22 @@
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup",
     "test": "vitest run",
     "clean": "rm -rf dist"
   },
   "dependencies": {
+    "@ho/sdk": "workspace:*",
     "@opentelemetry/api": "^1.9.0",
-    "@opentelemetry/instrumentation": "^0.200.0",
-    "@ho/sdk": "workspace:*"
+    "@opentelemetry/instrumentation": "^0.200.0"
   },
   "devDependencies": {
+    "@opentelemetry/context-async-hooks": "^2.7.1",
+    "@opentelemetry/sdk-trace-base": "^2.7.1",
     "openai": "^4.70.0",
     "tsup": "^8.3.0",
     "typescript": "^5.5.0",
@@ -34,6 +38,8 @@
     "openai": ">=4.0.0 <7.0.0"
   },
   "peerDependenciesMeta": {
-    "openai": { "optional": true }
+    "openai": {
+      "optional": true
+    }
   }
 }

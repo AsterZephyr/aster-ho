@@ -3,5 +3,8 @@ dist/
 *.tsbuildinfo
 .turbo/
 coverage/
+*.sqlite
+*.db
 .env
 .env.*
+.DS_Store

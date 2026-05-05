@@ -1,0 +1,21 @@
+service_name: my-agent
+enrichers:
+  - cost
+  - error-classify
+exporters:
+  file:
+    path: ./traces.jsonl
+  prometheus:
+    port: 9464
+    metrics:
+      - name: llm_calls
+        type: counter
+        source: span_count
+alerts:
+  rules:
+    - name: high-error-rate
+      condition:
+        metric: error_rate
+        operator: gt
+        threshold: 0.1
+      windowMs: 60000

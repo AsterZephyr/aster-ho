@@ -1,0 +1,4 @@
+{"traceId":"abc123","spanId":"span1","name":"chat","startTimeUnixNano":1700000000000,"endTimeUnixNano":1700000001000,"attributes":{"gen_ai.system":"openai","gen_ai.request.model":"gpt-4"}}
+{"traceId":"abc123","spanId":"span2","name":"completion","startTimeUnixNano":1700000001000,"endTimeUnixNano":1700000002000,"attributes":{"gen_ai.system":"anthropic","gen_ai.request.model":"claude-3"}}
+
+{"traceId":"abc456","spanId":"span3","name":"embed","startTimeUnixNano":1700000003000,"endTimeUnixNano":1700000004000,"attributes":{"gen_ai.system":"openai","gen_ai.request.model":"text-embedding-3-small"}}
