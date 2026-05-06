@@ -1,20 +1,31 @@
 {
-  "name": "@ho/exporter-prometheus",
-  "version": "0.1.0",
-  "description": "Prometheus metrics exporter with span-to-metrics connector",
-  "type": "module",
-  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js", "require": "./dist/index.cjs" } },
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "files": ["dist"],
-  "scripts": { "build": "tsup", "test": "vitest run", "clean": "rm -rf dist" },
-  "dependencies": {
-    "@opentelemetry/api": "^1.9.1",
-    "@opentelemetry/core": "^2.7.1",
-    "@opentelemetry/sdk-trace-base": "^2.7.1"
-  },
-  "devDependencies": { "tsup": "^8.3.0", "typescript": "^5.5.0", "vitest": "^2.1.0", "@ho/baseline": "workspace:*" },
-  "peerDependencies": { "@ho/baseline": "workspace:*" },
-  "peerDependenciesMeta": { "@ho/baseline": { "optional": true } }
+	"name": "@ho/exporter-prometheus",
+	"version": "0.1.0",
+	"description": "Prometheus metrics exporter with span-to-metrics connector",
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js",
+			"require": "./dist/index.cjs"
+		}
+	},
+	"main": "./dist/index.cjs",
+	"module": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"files": ["dist"],
+	"scripts": { "build": "tsup", "test": "vitest run", "clean": "rm -rf dist" },
+	"dependencies": {
+		"@opentelemetry/api": "^1.9.1",
+		"@opentelemetry/core": "^2.7.1",
+		"@opentelemetry/sdk-trace-base": "^2.7.1"
+	},
+	"devDependencies": {
+		"tsup": "^8.3.0",
+		"typescript": "^5.5.0",
+		"vitest": "^2.1.0",
+		"@ho/baseline": "workspace:*"
+	},
+	"peerDependencies": { "@ho/baseline": "workspace:*" },
+	"peerDependenciesMeta": { "@ho/baseline": { "optional": true } }
 }

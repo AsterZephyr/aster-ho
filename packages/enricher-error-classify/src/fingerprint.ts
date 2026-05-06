@@ -23,10 +23,7 @@ function normalize(message: string): string {
 	normalized = normalized.replace(/[A-Z]:\\[\w.\-\\]+/g, "<PATH>");
 
 	// ISO timestamps (2024-01-15T10:30:00Z variants)
-	normalized = normalized.replace(
-		/\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}[.\dZ]*/g,
-		"<TIMESTAMP>",
-	);
+	normalized = normalized.replace(/\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}[.\dZ]*/g, "<TIMESTAMP>");
 
 	// Numbers (integers and floats, including negatives)
 	normalized = normalized.replace(/-?\d+(\.\d+)?/g, "<N>");

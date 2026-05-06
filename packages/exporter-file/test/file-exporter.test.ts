@@ -1,10 +1,10 @@
-import { describe, expect, it, beforeEach, afterEach } from "vitest";
-import { readFile, unlink, stat } from "node:fs/promises";
-import { join } from "node:path";
+import { readFile, stat, unlink } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { SpanStatusCode, SpanKind } from "@opentelemetry/api";
+import { join } from "node:path";
+import { SpanKind, SpanStatusCode } from "@opentelemetry/api";
 import { ExportResultCode } from "@opentelemetry/core";
 import type { ReadableSpan } from "@opentelemetry/sdk-trace-base";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { FileExporter } from "../src/index.js";
 
 function mockSpan(overrides: Partial<ReadableSpan> = {}): ReadableSpan {
@@ -110,7 +110,11 @@ describe("FileExporter", () => {
 		const exporter = new FileExporter({ filePath });
 		const span = mockSpan({
 			events: [
-				{ name: "exception", time: [1700000001, 0] as [number, number], attributes: { "exception.message": "oops" } },
+				{
+					name: "exception",
+					time: [1700000001, 0] as [number, number],
+					attributes: { "exception.message": "oops" },
+				},
 			],
 		} as any);
 
@@ -145,9 +149,8 @@ describe("FileExporter", () => {
 		const exporter = new FileExporter({ filePath });
 
 		await new Promise<void>((resolve) => {
-			exporter.export(
-				[mockSpan({ name: "a" } as any), mockSpan({ name: "b" } as any)],
-				() => resolve(),
+			exporter.export([mockSpan({ name: "a" } as any), mockSpan({ name: "b" } as any)], () =>
+				resolve(),
 			);
 		});
 

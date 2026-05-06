@@ -1,5 +1,5 @@
-import { init, shutdown, withAgentLoop } from "@ho/sdk";
 import { CostEnricher } from "@ho/enricher-cost";
+import { init, shutdown, withAgentLoop } from "@ho/sdk";
 import OpenAI from "openai";
 
 init({

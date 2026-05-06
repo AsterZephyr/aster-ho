@@ -1,7 +1,11 @@
-import { describe, expect, it, beforeEach, afterEach } from "vitest";
 import { context, trace } from "@opentelemetry/api";
 import { AsyncHooksContextManager } from "@opentelemetry/context-async-hooks";
-import { BasicTracerProvider, InMemorySpanExporter, SimpleSpanProcessor } from "@opentelemetry/sdk-trace-base";
+import {
+	BasicTracerProvider,
+	InMemorySpanExporter,
+	SimpleSpanProcessor,
+} from "@opentelemetry/sdk-trace-base";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { InspectAIReceiver, parseEvalLog } from "../src/index.js";
 import fixture from "./fixtures/eval-log.json";
 
@@ -52,7 +56,7 @@ describe("InspectAIReceiver", () => {
 
 		const runSpan = spans.find((s) => s.name.startsWith("eval/run"));
 		expect(runSpan).toBeDefined();
-		expect(runSpan!.attributes["ho.eval.run_id"]).toBe("inspect-run-001");
+		expect(runSpan?.attributes["ho.eval.run_id"]).toBe("inspect-run-001");
 	});
 
 	it("creates model event spans with token usage", () => {
@@ -86,6 +90,6 @@ describe("InspectAIReceiver", () => {
 		const spans = exporter.getFinishedSpans();
 		const errorSpan = spans.find((s) => s.status.message === "Permission denied");
 		expect(errorSpan).toBeDefined();
-		expect(errorSpan!.status.code).toBe(2);
+		expect(errorSpan?.status.code).toBe(2);
 	});
 });

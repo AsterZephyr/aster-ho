@@ -58,7 +58,15 @@ export class BaselineStore {
 			WHERE model = ? AND tool = ? AND metric = ?
 		`);
 		const row = stmt.get(key.model, key.tool, metric) as
-			| { sample_count: number; mean: number; stddev: number; p50: number; p95: number; p99: number; computed_at_ms: number }
+			| {
+					sample_count: number;
+					mean: number;
+					stddev: number;
+					p50: number;
+					p95: number;
+					p99: number;
+					computed_at_ms: number;
+			  }
 			| undefined;
 
 		if (!row) return undefined;
@@ -74,7 +82,12 @@ export class BaselineStore {
 		};
 	}
 
-	isAnomaly(key: BaselineKey, metric: string, value: number, zscoreThreshold: number): AnomalyResult {
+	isAnomaly(
+		key: BaselineKey,
+		metric: string,
+		value: number,
+		zscoreThreshold: number,
+	): AnomalyResult {
 		const baseline = this.getBaseline(key, metric);
 		if (!baseline) {
 			return {
@@ -98,9 +111,11 @@ export class BaselineStore {
 			? Date.now() - periodMs
 			: Date.now() - this.retentionDays * 24 * 60 * 60 * 1000;
 
-		const groups = this.db.prepare(`
+		const groups = this.db
+			.prepare(`
 			SELECT DISTINCT model, tool FROM span_metrics WHERE timestamp_ms >= ?
-		`).all(cutoff) as Array<{ model: string; tool: string }>;
+		`)
+			.all(cutoff) as Array<{ model: string; tool: string }>;
 
 		const now = Date.now();
 		const upsertStmt = this.db.prepare(`

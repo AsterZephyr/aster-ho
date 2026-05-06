@@ -1,4 +1,3 @@
-import { describe, expect, it, beforeEach, afterEach } from "vitest";
 import { context, trace } from "@opentelemetry/api";
 import { AsyncHooksContextManager } from "@opentelemetry/context-async-hooks";
 import {
@@ -6,7 +5,8 @@ import {
 	InMemorySpanExporter,
 	SimpleSpanProcessor,
 } from "@opentelemetry/sdk-trace-base";
-import { wrapLLMCall, SUPPRESS_INSTRUMENTATION_KEY } from "../src/index.js";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { SUPPRESS_INSTRUMENTATION_KEY, wrapLLMCall } from "../src/index.js";
 
 describe("wrapLLMCall", () => {
 	let exporter: InMemorySpanExporter;

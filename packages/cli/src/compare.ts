@@ -57,7 +57,7 @@ export function parseTimeWindow(spec: string): number {
 		throw new Error(`Invalid time window: "${spec}". Use format like 7d, 24h, 30m`);
 	}
 
-	const value = parseInt(match[1]!, 10);
+	const value = Number.parseInt(match[1]!, 10);
 	const unit = match[2]!;
 
 	switch (unit) {
@@ -82,7 +82,8 @@ interface WindowMetrics {
 
 function queryWindowMetrics(store: BaselineStore, startMs: number, endMs: number): WindowMetrics {
 	const db = (store as any).db;
-	const row = db.prepare(`
+	const row = db
+		.prepare(`
 		SELECT
 			COALESCE(AVG(latency_ms), 0) as avg_latency,
 			COALESCE(AVG(cost_usd), 0) as avg_cost,
@@ -91,7 +92,8 @@ function queryWindowMetrics(store: BaselineStore, startMs: number, endMs: number
 			SUM(CASE WHEN error_category IS NOT NULL THEN 1 ELSE 0 END) as error_count
 		FROM span_metrics
 		WHERE timestamp_ms >= ? AND timestamp_ms < ?
-	`).get(startMs, endMs) as {
+	`)
+		.get(startMs, endMs) as {
 		avg_latency: number;
 		avg_cost: number;
 		avg_input_tokens: number;

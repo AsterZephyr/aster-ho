@@ -29,7 +29,7 @@ export function generateRecordingRules(
 		...rules,
 	];
 
-	return lines.join("\n") + "\n";
+	return `${lines.join("\n")}\n`;
 }
 
 function buildRulesForEntry(entry: BaselineInput, prefix: string): string[] {
@@ -49,8 +49,7 @@ function formatRule(
 	labels: string,
 	value: number,
 ): string {
-	return [
-		`      - record: ${prefix}:${metric}:${stat}{${labels}}`,
-		`        expr: ${value}`,
-	].join("\n");
+	return [`      - record: ${prefix}:${metric}:${stat}{${labels}}`, `        expr: ${value}`].join(
+		"\n",
+	);
 }

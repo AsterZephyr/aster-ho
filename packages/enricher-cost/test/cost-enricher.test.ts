@@ -1,6 +1,6 @@
-import { describe, expect, it } from "vitest";
 import { SpanStatusCode } from "@opentelemetry/api";
 import type { ReadableSpan } from "@opentelemetry/sdk-trace-base";
+import { describe, expect, it } from "vitest";
 import { CostEnricher } from "../src/index.js";
 
 function mockSpan(attrs: Record<string, unknown>): ReadableSpan {

@@ -1,7 +1,7 @@
-import type { Tracer } from "@opentelemetry/api";
-import { SpanKind, SpanStatusCode, context, trace } from "@opentelemetry/api";
 import type { ReceiverAdapter } from "@ho/sdk";
 import { GenAIAttributes, HoAttributes } from "@ho/sdk";
+import type { Tracer } from "@opentelemetry/api";
+import { SpanKind, SpanStatusCode, context, trace } from "@opentelemetry/api";
 import type { E2BSandboxConfig, E2BSandboxEvent } from "./types.js";
 
 export class E2BSandboxReceiver implements ReceiverAdapter {
@@ -35,14 +35,15 @@ export class E2BSandboxReceiver implements ReceiverAdapter {
 		const detail = event.command ?? event.path ?? "";
 		const spanName = `sandbox/${event.action} ${detail.split(" ")[0] ?? ""}`.trim();
 
-		const parentCtx = event.trace_id && event.span_id
-			? trace.setSpanContext(context.active(), {
-					traceId: event.trace_id,
-					spanId: event.span_id,
-					traceFlags: 1,
-					isRemote: true,
-				})
-			: context.active();
+		const parentCtx =
+			event.trace_id && event.span_id
+				? trace.setSpanContext(context.active(), {
+						traceId: event.trace_id,
+						spanId: event.span_id,
+						traceFlags: 1,
+						isRemote: true,
+					})
+				: context.active();
 
 		context.with(parentCtx, () => {
 			tracer.startActiveSpan(
@@ -57,7 +58,9 @@ export class E2BSandboxReceiver implements ReceiverAdapter {
 						[HoAttributes.SANDBOX_TYPE]: "e2b",
 						[HoAttributes.SANDBOX_ID]: event.sandbox_id,
 						[HoAttributes.SANDBOX_DURATION_MS]: event.duration_ms,
-						...(event.exit_code !== undefined ? { [HoAttributes.SANDBOX_EXIT_CODE]: event.exit_code } : {}),
+						...(event.exit_code !== undefined
+							? { [HoAttributes.SANDBOX_EXIT_CODE]: event.exit_code }
+							: {}),
 					},
 				},
 				(span) => {

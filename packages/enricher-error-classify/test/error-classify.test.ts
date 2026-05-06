@@ -1,7 +1,7 @@
-import { describe, expect, it, vi } from "vitest";
+import { GenAIAttributes, HoAttributes } from "@ho/sdk";
 import { SpanStatusCode } from "@opentelemetry/api";
 import type { ReadableSpan } from "@opentelemetry/sdk-trace-base";
-import { GenAIAttributes, HoAttributes } from "@ho/sdk";
+import { describe, expect, it, vi } from "vitest";
 import { ErrorClassifyEnricher, computeFingerprint } from "../src/index.js";
 
 function mockSpan(
@@ -23,7 +23,7 @@ describe("ErrorClassifyEnricher", () => {
 		const span = mockSpan(SpanStatusCode.OK);
 		const result = enricher.enrich(span, { existing: "attr" });
 		expect(result[HoAttributes.ERROR_CATEGORY]).toBeUndefined();
-		expect(result["existing"]).toBe("attr");
+		expect(result.existing).toBe("attr");
 	});
 
 	it("classifies rate limit errors as provider_error", () => {

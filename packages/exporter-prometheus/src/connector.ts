@@ -18,9 +18,10 @@ export function convertSpans(
 			const value = extractValue(span, metric.source);
 			if (value === undefined) continue;
 
-			const sampleLabels = metric.source === "context_rot_count"
-				? { ...labels, rot_type: String(span.attributes["ho.context_rot.type"]) }
-				: labels;
+			const sampleLabels =
+				metric.source === "context_rot_count"
+					? { ...labels, rot_type: String(span.attributes["ho.context_rot.type"]) }
+					: labels;
 
 			samples.push({ name: metric.name, type: metric.type, value, labels: sampleLabels });
 		}
@@ -45,19 +46,19 @@ function extractValue(span: ReadableSpan, source: string): number | undefined {
 		case "span_duration": {
 			const [ss, sn] = span.startTime;
 			const [es, en] = span.endTime;
-			return (es - ss) + (en - sn) / 1_000_000_000;
+			return es - ss + (en - sn) / 1_000_000_000;
 		}
 		case "input_tokens":
 			return typeof span.attributes["gen_ai.usage.input_tokens"] === "number"
-				? span.attributes["gen_ai.usage.input_tokens"] as number
+				? (span.attributes["gen_ai.usage.input_tokens"] as number)
 				: undefined;
 		case "output_tokens":
 			return typeof span.attributes["gen_ai.usage.output_tokens"] === "number"
-				? span.attributes["gen_ai.usage.output_tokens"] as number
+				? (span.attributes["gen_ai.usage.output_tokens"] as number)
 				: undefined;
 		case "cost":
 			return typeof span.attributes["ho.cost.usd"] === "number"
-				? span.attributes["ho.cost.usd"] as number
+				? (span.attributes["ho.cost.usd"] as number)
 				: undefined;
 		case "error_count":
 			return span.status.code === SpanStatusCode.ERROR ? 1 : 0;

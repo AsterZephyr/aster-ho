@@ -1,9 +1,9 @@
-import type { ReadableSpan } from "@opentelemetry/sdk-trace-base";
 import type { Attributes, SpanKind, SpanStatus } from "@opentelemetry/api";
 import { SpanStatusCode } from "@opentelemetry/api";
-import type { SpanExporter } from "@opentelemetry/sdk-trace-base";
 import type { ExportResult } from "@opentelemetry/core";
 import { ExportResultCode } from "@opentelemetry/core";
+import type { ReadableSpan } from "@opentelemetry/sdk-trace-base";
+import type { SpanExporter } from "@opentelemetry/sdk-trace-base";
 
 export interface LangfuseExporterConfig {
 	publicKey: string;

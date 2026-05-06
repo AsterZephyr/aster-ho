@@ -1,13 +1,13 @@
-import { describe, expect, it, beforeEach, afterEach } from "vitest";
-import { context, SpanKind, SpanStatusCode, trace } from "@opentelemetry/api";
+import { SUPPRESS_INSTRUMENTATION_KEY } from "@ho/sdk";
+import { SpanKind, SpanStatusCode, context, trace } from "@opentelemetry/api";
 import { AsyncHooksContextManager } from "@opentelemetry/context-async-hooks";
 import {
 	BasicTracerProvider,
 	InMemorySpanExporter,
 	SimpleSpanProcessor,
 } from "@opentelemetry/sdk-trace-base";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { OpenAIInstrumentation } from "../src/index.js";
-import { SUPPRESS_INSTRUMENTATION_KEY } from "@ho/sdk";
 
 describe("OpenAIInstrumentation", () => {
 	let exporter: InMemorySpanExporter;
@@ -101,12 +101,15 @@ describe("OpenAIInstrumentation", () => {
 		});
 
 		const patched = (instrumentation as any)._patchCreate()(mockCreate);
-		await patched.call({}, {
-			model: "gpt-4o",
-			temperature: 0.7,
-			top_p: 0.9,
-			max_tokens: 100,
-		});
+		await patched.call(
+			{},
+			{
+				model: "gpt-4o",
+				temperature: 0.7,
+				top_p: 0.9,
+				max_tokens: 100,
+			},
+		);
 
 		const span = exporter.getFinishedSpans()[0];
 		expect(span.attributes["gen_ai.request.temperature"]).toBe(0.7);

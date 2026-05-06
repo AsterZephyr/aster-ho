@@ -1,6 +1,6 @@
-import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import { SpanStatusCode } from "@opentelemetry/api";
 import type { ReadableSpan } from "@opentelemetry/sdk-trace-base";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { LangfuseExporter } from "../src/index.js";
 
 function mockSpan(overrides: Partial<ReadableSpan> = {}): ReadableSpan {
@@ -60,7 +60,9 @@ describe("LangfuseExporter", () => {
 		expect(fetchMock).toHaveBeenCalledOnce();
 		const [url, opts] = fetchMock.mock.calls[0];
 		expect(url).toBe("https://cloud.langfuse.com/api/public/otel/v1/traces");
-		expect(opts.headers.Authorization).toBe(`Basic ${Buffer.from("pk-test:sk-test").toString("base64")}`);
+		expect(opts.headers.Authorization).toBe(
+			`Basic ${Buffer.from("pk-test:sk-test").toString("base64")}`,
+		);
 		expect(opts.headers["Content-Type"]).toBe("application/json");
 
 		const body = JSON.parse(opts.body);

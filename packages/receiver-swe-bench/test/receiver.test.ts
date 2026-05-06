@@ -1,4 +1,3 @@
-import { describe, expect, it, beforeEach, afterEach } from "vitest";
 import { context, trace } from "@opentelemetry/api";
 import { AsyncHooksContextManager } from "@opentelemetry/context-async-hooks";
 import {
@@ -6,6 +5,7 @@ import {
 	InMemorySpanExporter,
 	SimpleSpanProcessor,
 } from "@opentelemetry/sdk-trace-base";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { SWEBenchReceiver, parseReport } from "../src/index.js";
 import fixture from "./fixtures/report.json";
 
@@ -65,9 +65,9 @@ describe("SWEBenchReceiver", () => {
 
 		const runSpan = spans.find((s) => s.name.startsWith("eval/run"));
 		expect(runSpan).toBeDefined();
-		expect(runSpan!.attributes["ho.eval.run_id"]).toBe("run-2025-01-15");
-		expect(runSpan!.attributes["ho.eval.total_samples"]).toBe(3);
-		expect(runSpan!.attributes["ho.eval.resolved_count"]).toBe(1);
+		expect(runSpan?.attributes["ho.eval.run_id"]).toBe("run-2025-01-15");
+		expect(runSpan?.attributes["ho.eval.total_samples"]).toBe(3);
+		expect(runSpan?.attributes["ho.eval.resolved_count"]).toBe(1);
 	});
 
 	it("sets parent-child relationship between run and samples", () => {
@@ -92,8 +92,8 @@ describe("SWEBenchReceiver", () => {
 		const spans = exporter.getFinishedSpans();
 		const failedSpan = spans.find((s) => s.name.includes("flask__flask-6789"));
 		expect(failedSpan).toBeDefined();
-		expect(failedSpan!.status.code).toBe(2); // ERROR
-		expect(failedSpan!.status.message).toBe("Tests failed after patch");
+		expect(failedSpan?.status.code).toBe(2); // ERROR
+		expect(failedSpan?.status.message).toBe("Tests failed after patch");
 	});
 
 	it("throws if not initialized", () => {

@@ -7,4 +7,11 @@ export { createWindow, pushMetric, getMetricValue } from "./window.js";
 export type { WindowState } from "./window.js";
 export { evaluate, evaluateAnomaly } from "./evaluator.js";
 export { isAnomalyCondition } from "./types.js";
-export type { AlertRule, AlertCondition, AnomalyCondition, AlertNotifier, AlertEvent, AlertProcessorConfig } from "./types.js";
+export type {
+	AlertRule,
+	AlertCondition,
+	AnomalyCondition,
+	AlertNotifier,
+	AlertEvent,
+	AlertProcessorConfig,
+} from "./types.js";

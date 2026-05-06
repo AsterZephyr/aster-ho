@@ -1,13 +1,27 @@
-import { describe, expect, it, vi } from "vitest";
+import type { AnomalyResult, BaselineKey, BaselineStore } from "@ho/baseline";
+import type { TicketProvider, TicketRequest, TicketResult } from "@ho/ticket-provider";
 import { SpanStatusCode } from "@opentelemetry/api";
 import type { ReadableSpan } from "@opentelemetry/sdk-trace-base";
-import { AlertProcessor, ConsoleNotifier, createWindow, pushMetric, getMetricValue, evaluateAnomaly } from "../src/index.js";
-import type { AnomalyCondition, AlertNotifier, AlertEvent } from "../src/index.js";
+import { describe, expect, it, vi } from "vitest";
+import {
+	AlertProcessor,
+	ConsoleNotifier,
+	createWindow,
+	evaluateAnomaly,
+	getMetricValue,
+	pushMetric,
+} from "../src/index.js";
+import type { AlertEvent, AlertNotifier, AnomalyCondition } from "../src/index.js";
 import { TicketNotifier } from "../src/ticket-notifier.js";
-import type { TicketProvider, TicketRequest, TicketResult } from "@ho/ticket-provider";
-import type { BaselineStore, BaselineKey, AnomalyResult } from "@ho/baseline";
 
-function mockSpan(overrides: Partial<{ statusCode: number; startTime: [number, number]; endTime: [number, number]; attributes: Record<string, unknown> }> = {}): ReadableSpan {
+function mockSpan(
+	overrides: Partial<{
+		statusCode: number;
+		startTime: [number, number];
+		endTime: [number, number];
+		attributes: Record<string, unknown>;
+	}> = {},
+): ReadableSpan {
 	return {
 		status: { code: overrides.statusCode ?? SpanStatusCode.OK },
 		startTime: overrides.startTime ?? [1700000000, 0],
@@ -44,12 +58,14 @@ describe("AlertProcessor", () => {
 	it("fires alert when error_rate exceeds threshold", () => {
 		const notifier = new ConsoleNotifier();
 		const processor = new AlertProcessor({
-			rules: [{
-				name: "high-errors",
-				condition: { metric: "error_rate", operator: "gt", threshold: 0.5 },
-				windowMs: 60000,
-				notifiers: [notifier],
-			}],
+			rules: [
+				{
+					name: "high-errors",
+					condition: { metric: "error_rate", operator: "gt", threshold: 0.5 },
+					windowMs: 60000,
+					notifiers: [notifier],
+				},
+			],
 		});
 
 		// 3 errors out of 4 spans = 75% error rate
@@ -65,12 +81,14 @@ describe("AlertProcessor", () => {
 	it("does not fire when below threshold", () => {
 		const notifier = new ConsoleNotifier();
 		const processor = new AlertProcessor({
-			rules: [{
-				name: "high-errors",
-				condition: { metric: "error_rate", operator: "gt", threshold: 0.9 },
-				windowMs: 60000,
-				notifiers: [notifier],
-			}],
+			rules: [
+				{
+					name: "high-errors",
+					condition: { metric: "error_rate", operator: "gt", threshold: 0.9 },
+					windowMs: 60000,
+					notifiers: [notifier],
+				},
+			],
 		});
 
 		processor.enrich(mockSpan({ statusCode: SpanStatusCode.OK }), {});
@@ -82,13 +100,15 @@ describe("AlertProcessor", () => {
 	it("respects cooldown", () => {
 		const notifier = new ConsoleNotifier();
 		const processor = new AlertProcessor({
-			rules: [{
-				name: "rate-alert",
-				condition: { metric: "error_rate", operator: "gte", threshold: 0 },
-				windowMs: 60000,
-				cooldownMs: 999999999, // very long cooldown
-				notifiers: [notifier],
-			}],
+			rules: [
+				{
+					name: "rate-alert",
+					condition: { metric: "error_rate", operator: "gte", threshold: 0 },
+					windowMs: 60000,
+					cooldownMs: 999999999, // very long cooldown
+					notifiers: [notifier],
+				},
+			],
 		});
 
 		processor.enrich(mockSpan({ statusCode: SpanStatusCode.ERROR }), {});
@@ -102,12 +122,19 @@ describe("AlertProcessor", () => {
 	it("respects attribute filter", () => {
 		const notifier = new ConsoleNotifier();
 		const processor = new AlertProcessor({
-			rules: [{
-				name: "filtered",
-				condition: { metric: "span_count", operator: "gte", threshold: 1, filter: { "gen_ai.request.model": "gpt-4" } },
-				windowMs: 60000,
-				notifiers: [notifier],
-			}],
+			rules: [
+				{
+					name: "filtered",
+					condition: {
+						metric: "span_count",
+						operator: "gte",
+						threshold: 1,
+						filter: { "gen_ai.request.model": "gpt-4" },
+					},
+					windowMs: 60000,
+					notifiers: [notifier],
+				},
+			],
 		});
 
 		processor.enrich(mockSpan({ attributes: { "gen_ai.request.model": "claude" } }), {});
@@ -127,12 +154,14 @@ describe("AlertProcessor", () => {
 	it("fires on latency threshold", () => {
 		const notifier = new ConsoleNotifier();
 		const processor = new AlertProcessor({
-			rules: [{
-				name: "slow",
-				condition: { metric: "latency_avg", operator: "gt", threshold: 500 },
-				windowMs: 60000,
-				notifiers: [notifier],
-			}],
+			rules: [
+				{
+					name: "slow",
+					condition: { metric: "latency_avg", operator: "gt", threshold: 500 },
+					windowMs: 60000,
+					notifiers: [notifier],
+				},
+			],
 		});
 
 		// 2 second latency span
@@ -189,9 +218,9 @@ describe("evaluateAnomaly", () => {
 		const event = evaluateAnomaly(store, key, condition, 200);
 
 		expect(event).toBeDefined();
-		expect(event!.metric).toBe("latency_ms");
-		expect(event!.value).toBe(200);
-		expect(event!.threshold).toBe(3.5); // zscore
+		expect(event?.metric).toBe("latency_ms");
+		expect(event?.value).toBe(200);
+		expect(event?.threshold).toBe(3.5); // zscore
 	});
 
 	it("does not fire below threshold", () => {
@@ -229,7 +258,9 @@ describe("evaluateAnomaly", () => {
 
 describe("TicketNotifier", () => {
 	it("calls provider.createTicket when no duplicate exists", async () => {
-		const createTicket = vi.fn().mockResolvedValue({ id: "T-1", url: "http://t/1", status: "open", createdAt: Date.now() });
+		const createTicket = vi
+			.fn()
+			.mockResolvedValue({ id: "T-1", url: "http://t/1", status: "open", createdAt: Date.now() });
 		const findDuplicate = vi.fn().mockResolvedValue(undefined);
 		const provider: TicketProvider = {
 			name: "mock",
@@ -261,7 +292,9 @@ describe("TicketNotifier", () => {
 
 	it("skips when duplicate exists", async () => {
 		const createTicket = vi.fn();
-		const findDuplicate = vi.fn().mockResolvedValue({ id: "T-1", url: "http://t/1", status: "open", createdAt: Date.now() });
+		const findDuplicate = vi
+			.fn()
+			.mockResolvedValue({ id: "T-1", url: "http://t/1", status: "open", createdAt: Date.now() });
 		const provider: TicketProvider = {
 			name: "mock",
 			createTicket,

@@ -23,7 +23,7 @@ describe("repairAndParse", () => {
 	});
 
 	it("rejects arrays (only objects accepted)", () => {
-		const result = repairAndParse('[1, 2, 3]');
+		const result = repairAndParse("[1, 2, 3]");
 		expect(result.success).toBe(false);
 	});
 });
@@ -100,14 +100,14 @@ describe("singleQuotedJson", () => {
 });
 
 describe("emptyToEmptyObject", () => {
-	it('converts empty string to {}', () => {
+	it("converts empty string to {}", () => {
 		const result = repairAndParse("");
 		expect(result.success).toBe(true);
 		expect(result.value).toEqual({});
 		expect(result.strategyUsed).toBe("emptyToEmptyObject");
 	});
 
-	it('converts quoted empty string to {}', () => {
+	it("converts quoted empty string to {}", () => {
 		const result = repairAndParse('""');
 		expect(result.success).toBe(true);
 		expect(result.value).toEqual({});

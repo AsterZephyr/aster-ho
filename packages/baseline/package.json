@@ -1,37 +1,35 @@
 {
-  "name": "@ho/baseline",
-  "version": "0.1.0",
-  "description": "SQLite baseline store for ho anomaly detection",
-  "type": "module",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
-    }
-  },
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
-  "scripts": {
-    "build": "tsup",
-    "test": "vitest run",
-    "clean": "rm -rf dist"
-  },
-  "dependencies": {
-    "@ho/sdk": "workspace:*",
-    "@opentelemetry/api": "^1.9.1",
-    "@opentelemetry/core": "^2.7.1",
-    "@opentelemetry/sdk-trace-base": "^2.7.1",
-    "better-sqlite3": "^11.0.0"
-  },
-  "devDependencies": {
-    "@types/better-sqlite3": "^7.6.0",
-    "tsup": "^8.3.0",
-    "typescript": "^5.5.0",
-    "vitest": "^2.1.0"
-  }
+	"name": "@ho/baseline",
+	"version": "0.1.0",
+	"description": "SQLite baseline store for ho anomaly detection",
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js",
+			"require": "./dist/index.cjs"
+		}
+	},
+	"main": "./dist/index.cjs",
+	"module": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"files": ["dist"],
+	"scripts": {
+		"build": "tsup",
+		"test": "vitest run",
+		"clean": "rm -rf dist"
+	},
+	"dependencies": {
+		"@ho/sdk": "workspace:*",
+		"@opentelemetry/api": "^1.9.1",
+		"@opentelemetry/core": "^2.7.1",
+		"@opentelemetry/sdk-trace-base": "^2.7.1",
+		"better-sqlite3": "^11.0.0"
+	},
+	"devDependencies": {
+		"@types/better-sqlite3": "^7.6.0",
+		"tsup": "^8.3.0",
+		"typescript": "^5.5.0",
+		"vitest": "^2.1.0"
+	}
 }

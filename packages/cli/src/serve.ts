@@ -1,6 +1,6 @@
-import type { SpanExporter } from "@opentelemetry/sdk-trace-base";
 import { FileExporter } from "@ho/exporter-file";
 import { PrometheusExporter } from "@ho/exporter-prometheus";
+import type { SpanExporter } from "@opentelemetry/sdk-trace-base";
 import { loadConfig } from "./config-loader.js";
 import type { HoConfigFile } from "./types.js";
 
@@ -14,10 +14,14 @@ export function buildExporters(config: HoConfigFile): SpanExporter[] {
 
 	if (config.exporters?.prometheus) {
 		const promConfig = config.exporters.prometheus as { port?: number; metrics?: any[] };
-		exporters.push(new PrometheusExporter({
-			port: promConfig.port ?? 9464,
-			metrics: promConfig.metrics ?? [{ name: "llm_calls", type: "counter" as const, source: "span_count" as const }],
-		}));
+		exporters.push(
+			new PrometheusExporter({
+				port: promConfig.port ?? 9464,
+				metrics: promConfig.metrics ?? [
+					{ name: "llm_calls", type: "counter" as const, source: "span_count" as const },
+				],
+			}),
+		);
 	}
 
 	return exporters;

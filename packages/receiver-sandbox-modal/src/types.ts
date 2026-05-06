@@ -12,4 +12,4 @@ export interface ModalContainerEvent {
 	readonly span_id?: string;
 }
 
-export interface ModalSandboxConfig {}
+export type ModalSandboxConfig = Record<string, never>;

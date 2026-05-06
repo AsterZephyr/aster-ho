@@ -1,10 +1,5 @@
 import { execFile } from "node:child_process";
-import type {
-	GitHubTicketConfig,
-	TicketProvider,
-	TicketRequest,
-	TicketResult,
-} from "./types.js";
+import type { GitHubTicketConfig, TicketProvider, TicketRequest, TicketResult } from "./types.js";
 
 export class GitHubTicketProvider implements TicketProvider {
 	readonly name = "github";
@@ -102,11 +97,7 @@ export class GitHubTicketProvider implements TicketProvider {
 		return new Promise((resolve, reject) => {
 			execFile("gh", args, (error, stdout, stderr) => {
 				if (error) {
-					reject(
-						new Error(
-							`gh command failed: ${stderr || error.message}`,
-						),
-					);
+					reject(new Error(`gh command failed: ${stderr || error.message}`));
 					return;
 				}
 				resolve(stdout);

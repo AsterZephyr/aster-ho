@@ -1,31 +1,31 @@
 {
-  "run_id": "run-2025-01-15",
-  "model": "claude-sonnet-4-20250514",
-  "dataset": "swe-bench-lite",
-  "instances": [
-    {
-      "instance_id": "django__django-12345",
-      "resolved": true,
-      "duration_ms": 45000,
-      "patch_applied": true,
-      "fail_to_pass": { "passed": 3, "total": 3 },
-      "pass_to_pass": { "passed": 120, "total": 120 }
-    },
-    {
-      "instance_id": "flask__flask-6789",
-      "resolved": false,
-      "duration_ms": 60000,
-      "error": "Tests failed after patch",
-      "patch_applied": true,
-      "fail_to_pass": { "passed": 1, "total": 3 },
-      "pass_to_pass": { "passed": 118, "total": 120 }
-    },
-    {
-      "instance_id": "requests__requests-111",
-      "resolved": false,
-      "timed_out": true,
-      "duration_ms": 300000
-    }
-  ],
-  "total_duration_ms": 405000
+	"run_id": "run-2025-01-15",
+	"model": "claude-sonnet-4-20250514",
+	"dataset": "swe-bench-lite",
+	"instances": [
+		{
+			"instance_id": "django__django-12345",
+			"resolved": true,
+			"duration_ms": 45000,
+			"patch_applied": true,
+			"fail_to_pass": { "passed": 3, "total": 3 },
+			"pass_to_pass": { "passed": 120, "total": 120 }
+		},
+		{
+			"instance_id": "flask__flask-6789",
+			"resolved": false,
+			"duration_ms": 60000,
+			"error": "Tests failed after patch",
+			"patch_applied": true,
+			"fail_to_pass": { "passed": 1, "total": 3 },
+			"pass_to_pass": { "passed": 118, "total": 120 }
+		},
+		{
+			"instance_id": "requests__requests-111",
+			"resolved": false,
+			"timed_out": true,
+			"duration_ms": 300000
+		}
+	],
+	"total_duration_ms": 405000
 }

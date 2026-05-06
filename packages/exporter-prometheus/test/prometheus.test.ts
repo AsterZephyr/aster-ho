@@ -1,11 +1,24 @@
-import { describe, expect, it, afterEach } from "vitest";
+import type { BaselineStats } from "@ho/baseline";
 import { SpanKind, SpanStatusCode } from "@opentelemetry/api";
 import { ExportResultCode } from "@opentelemetry/core";
 import type { ReadableSpan } from "@opentelemetry/sdk-trace-base";
-import { PrometheusExporter, convertSpans, Aggregator, generateRecordingRules } from "../src/index.js";
-import type { BaselineStats } from "@ho/baseline";
+import { afterEach, describe, expect, it } from "vitest";
+import {
+	Aggregator,
+	PrometheusExporter,
+	convertSpans,
+	generateRecordingRules,
+} from "../src/index.js";
 
-function mockSpan(overrides: Partial<{ name: string; attributes: Record<string, unknown>; statusCode: number; startTime: [number, number]; endTime: [number, number] }> = {}): ReadableSpan {
+function mockSpan(
+	overrides: Partial<{
+		name: string;
+		attributes: Record<string, unknown>;
+		statusCode: number;
+		startTime: [number, number];
+		endTime: [number, number];
+	}> = {},
+): ReadableSpan {
 	return {
 		name: overrides.name ?? "test",
 		kind: SpanKind.CLIENT,
@@ -21,17 +34,29 @@ function mockSpan(overrides: Partial<{ name: string; attributes: Record<string, 
 describe("Connector", () => {
 	it("extracts span_duration metric", () => {
 		const spans = [mockSpan({ startTime: [100, 0], endTime: [102, 500000000] })];
-		const samples = convertSpans(spans, [{ name: "call_duration", type: "histogram", source: "span_duration" }], []);
+		const samples = convertSpans(
+			spans,
+			[{ name: "call_duration", type: "histogram", source: "span_duration" }],
+			[],
+		);
 		expect(samples).toHaveLength(1);
 		expect(samples[0].value).toBeCloseTo(2.5);
 	});
 
 	it("extracts token metrics", () => {
-		const spans = [mockSpan({ attributes: { "gen_ai.usage.input_tokens": 100, "gen_ai.usage.output_tokens": 50 } })];
-		const samples = convertSpans(spans, [
-			{ name: "input_tok", type: "counter", source: "input_tokens" },
-			{ name: "output_tok", type: "counter", source: "output_tokens" },
-		], []);
+		const spans = [
+			mockSpan({
+				attributes: { "gen_ai.usage.input_tokens": 100, "gen_ai.usage.output_tokens": 50 },
+			}),
+		];
+		const samples = convertSpans(
+			spans,
+			[
+				{ name: "input_tok", type: "counter", source: "input_tokens" },
+				{ name: "output_tok", type: "counter", source: "output_tokens" },
+			],
+			[],
+		);
 		expect(samples).toHaveLength(2);
 		expect(samples[0].value).toBe(100);
 		expect(samples[1].value).toBe(50);
@@ -42,13 +67,28 @@ describe("Connector", () => {
 			mockSpan({ attributes: { "gen_ai.request.model": "gpt-4" } }),
 			mockSpan({ attributes: { "gen_ai.request.model": "claude" } }),
 		];
-		const samples = convertSpans(spans, [{ name: "count", type: "counter", source: "span_count", filter: { "gen_ai.request.model": "gpt-4" } }], []);
+		const samples = convertSpans(
+			spans,
+			[
+				{
+					name: "count",
+					type: "counter",
+					source: "span_count",
+					filter: { "gen_ai.request.model": "gpt-4" },
+				},
+			],
+			[],
+		);
 		expect(samples).toHaveLength(1);
 	});
 
 	it("extracts dimension labels", () => {
 		const spans = [mockSpan({ attributes: { "gen_ai.request.model": "gpt-4" } })];
-		const samples = convertSpans(spans, [{ name: "count", type: "counter", source: "span_count" }], ["gen_ai.request.model"]);
+		const samples = convertSpans(
+			spans,
+			[{ name: "count", type: "counter", source: "span_count" }],
+			["gen_ai.request.model"],
+		);
 		expect(samples[0].labels).toEqual({ gen_ai_request_model: "gpt-4" });
 	});
 });
@@ -89,7 +129,9 @@ describe("PrometheusExporter", () => {
 		});
 
 		const result = { code: -1 };
-		exporter.export([mockSpan()], (r) => { result.code = r.code; });
+		exporter.export([mockSpan()], (r) => {
+			result.code = r.code;
+		});
 		expect(result.code).toBe(ExportResultCode.SUCCESS);
 
 		const output = exporter.getMetricsOutput();
@@ -116,14 +158,23 @@ describe("PrometheusExporter", () => {
 
 describe("Recording Rules", () => {
 	it("generates valid YAML structure", () => {
-		const baselines: Array<{ model: string; tool: string; metric: string; stats: BaselineStats }> = [
-			{
-				model: "gpt-4",
-				tool: "search",
-				metric: "latency_ms",
-				stats: { count: 100, mean: 42.5, stddev: 15.7, p50: 40, p95: 120.3, p99: 200, lastUpdated: Date.now() },
-			},
-		];
+		const baselines: Array<{ model: string; tool: string; metric: string; stats: BaselineStats }> =
+			[
+				{
+					model: "gpt-4",
+					tool: "search",
+					metric: "latency_ms",
+					stats: {
+						count: 100,
+						mean: 42.5,
+						stddev: 15.7,
+						p50: 40,
+						p95: 120.3,
+						p99: 200,
+						lastUpdated: Date.now(),
+					},
+				},
+			];
 
 		const yaml = generateRecordingRules(baselines);
 		expect(yaml).toContain("groups:");
@@ -138,14 +189,23 @@ describe("Recording Rules", () => {
 	});
 
 	it("respects custom prefix", () => {
-		const baselines: Array<{ model: string; tool: string; metric: string; stats: BaselineStats }> = [
-			{
-				model: "claude-3",
-				tool: "embed",
-				metric: "cost_usd",
-				stats: { count: 50, mean: 0.003, stddev: 0.001, p50: 0.0025, p95: 0.005, p99: 0.008, lastUpdated: Date.now() },
-			},
-		];
+		const baselines: Array<{ model: string; tool: string; metric: string; stats: BaselineStats }> =
+			[
+				{
+					model: "claude-3",
+					tool: "embed",
+					metric: "cost_usd",
+					stats: {
+						count: 50,
+						mean: 0.003,
+						stddev: 0.001,
+						p50: 0.0025,
+						p95: 0.005,
+						p99: 0.008,
+						lastUpdated: Date.now(),
+					},
+				},
+			];
 
 		const yaml = generateRecordingRules(baselines, { prefix: "myapp", evaluation_interval: "5m" });
 		expect(yaml).toContain("name: myapp_baselines");

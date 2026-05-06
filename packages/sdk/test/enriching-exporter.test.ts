@@ -1,8 +1,8 @@
-import { describe, expect, it, vi } from "vitest";
 import { SpanStatusCode } from "@opentelemetry/api";
 import type { Attributes } from "@opentelemetry/api";
 import { ExportResultCode } from "@opentelemetry/core";
 import type { ReadableSpan, SpanExporter } from "@opentelemetry/sdk-trace-base";
+import { describe, expect, it, vi } from "vitest";
 import { EnrichingExporter } from "../src/enriching-exporter.js";
 import type { SpanEnricher } from "../src/types.js";
 
@@ -36,7 +36,10 @@ describe("EnrichingExporter", () => {
 	it("passes enriched spans to inner exporter", () => {
 		const exported: ReadableSpan[] = [];
 		const inner: SpanExporter = {
-			export(spans, cb) { exported.push(...spans); cb({ code: ExportResultCode.SUCCESS }); },
+			export(spans, cb) {
+				exported.push(...spans);
+				cb({ code: ExportResultCode.SUCCESS });
+			},
 			shutdown: () => Promise.resolve(),
 		};
 
@@ -59,15 +62,22 @@ describe("EnrichingExporter", () => {
 	it("chains multiple enrichers in order", () => {
 		const exported: ReadableSpan[] = [];
 		const inner: SpanExporter = {
-			export(spans, cb) { exported.push(...spans); cb({ code: ExportResultCode.SUCCESS }); },
+			export(spans, cb) {
+				exported.push(...spans);
+				cb({ code: ExportResultCode.SUCCESS });
+			},
 			shutdown: () => Promise.resolve(),
 		};
 
 		const enricher1: SpanEnricher = {
-			enrich(_span, attrs) { return { ...attrs, step: 1 }; },
+			enrich(_span, attrs) {
+				return { ...attrs, step: 1 };
+			},
 		};
 		const enricher2: SpanEnricher = {
-			enrich(_span, attrs) { return { ...attrs, step: (attrs.step as number) + 1 }; },
+			enrich(_span, attrs) {
+				return { ...attrs, step: (attrs.step as number) + 1 };
+			},
 		};
 
 		const exporter = new EnrichingExporter(inner, [enricher1, enricher2]);
@@ -79,15 +89,22 @@ describe("EnrichingExporter", () => {
 	it("isolates enricher exceptions — skips failing enricher", () => {
 		const exported: ReadableSpan[] = [];
 		const inner: SpanExporter = {
-			export(spans, cb) { exported.push(...spans); cb({ code: ExportResultCode.SUCCESS }); },
+			export(spans, cb) {
+				exported.push(...spans);
+				cb({ code: ExportResultCode.SUCCESS });
+			},
 			shutdown: () => Promise.resolve(),
 		};
 
 		const failingEnricher: SpanEnricher = {
-			enrich() { throw new Error("enricher crash"); },
+			enrich() {
+				throw new Error("enricher crash");
+			},
 		};
 		const safeEnricher: SpanEnricher = {
-			enrich(_span, attrs) { return { ...attrs, "ho.safe": true }; },
+			enrich(_span, attrs) {
+				return { ...attrs, "ho.safe": true };
+			},
 		};
 
 		const exporter = new EnrichingExporter(inner, [failingEnricher, safeEnricher]);
@@ -100,12 +117,17 @@ describe("EnrichingExporter", () => {
 	it("wrapper delegates spanContext() correctly", () => {
 		const exported: ReadableSpan[] = [];
 		const inner: SpanExporter = {
-			export(spans, cb) { exported.push(...spans); cb({ code: ExportResultCode.SUCCESS }); },
+			export(spans, cb) {
+				exported.push(...spans);
+				cb({ code: ExportResultCode.SUCCESS });
+			},
 			shutdown: () => Promise.resolve(),
 		};
 
 		const enricher: SpanEnricher = {
-			enrich(_span, attrs) { return { ...attrs, added: true }; },
+			enrich(_span, attrs) {
+				return { ...attrs, added: true };
+			},
 		};
 
 		const exporter = new EnrichingExporter(inner, [enricher]);

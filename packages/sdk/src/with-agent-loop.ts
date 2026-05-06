@@ -100,7 +100,7 @@ export async function withAgentLoop<T>(
 
 			const checkLimits = () => {
 				if (aborted) {
-					throw new AgentLoopTimeoutError(opts!.timeout!);
+					throw new AgentLoopTimeoutError(opts?.timeout!);
 				}
 				if (opts?.maxIterations && loop.iteration >= opts.maxIterations) {
 					throw new AgentLoopMaxIterationsError(opts.maxIterations);

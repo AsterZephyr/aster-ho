@@ -1,23 +1,58 @@
 {
-  "eval": { "task": "coding-bench", "model": "claude-sonnet-4-20250514", "run_id": "inspect-run-001" },
-  "samples": [
-    {
-      "id": "sample-1",
-      "scores": { "accuracy": { "value": 0.85 } },
-      "events": [
-        { "type": "model", "timestamp": "2025-01-01T00:00:00Z", "duration_ms": 1200, "model": "claude-sonnet-4-20250514", "input_tokens": 500, "output_tokens": 200 },
-        { "type": "tool", "timestamp": "2025-01-01T00:00:01Z", "duration_ms": 50, "tool_name": "read_file" },
-        { "type": "sandbox", "timestamp": "2025-01-01T00:00:02Z", "duration_ms": 3000, "command": "python test.py", "exit_code": 0 }
-      ]
-    },
-    {
-      "id": "sample-2",
-      "scores": { "accuracy": { "value": 0.0 } },
-      "events": [
-        { "type": "model", "timestamp": "2025-01-01T00:01:00Z", "duration_ms": 800, "model": "claude-sonnet-4-20250514", "input_tokens": 300, "output_tokens": 100 },
-        { "type": "tool", "timestamp": "2025-01-01T00:01:01Z", "duration_ms": 30, "tool_name": "write_file", "error": "Permission denied" }
-      ]
-    }
-  ],
-  "results": { "scores": { "accuracy": 0.425 } }
+	"eval": {
+		"task": "coding-bench",
+		"model": "claude-sonnet-4-20250514",
+		"run_id": "inspect-run-001"
+	},
+	"samples": [
+		{
+			"id": "sample-1",
+			"scores": { "accuracy": { "value": 0.85 } },
+			"events": [
+				{
+					"type": "model",
+					"timestamp": "2025-01-01T00:00:00Z",
+					"duration_ms": 1200,
+					"model": "claude-sonnet-4-20250514",
+					"input_tokens": 500,
+					"output_tokens": 200
+				},
+				{
+					"type": "tool",
+					"timestamp": "2025-01-01T00:00:01Z",
+					"duration_ms": 50,
+					"tool_name": "read_file"
+				},
+				{
+					"type": "sandbox",
+					"timestamp": "2025-01-01T00:00:02Z",
+					"duration_ms": 3000,
+					"command": "python test.py",
+					"exit_code": 0
+				}
+			]
+		},
+		{
+			"id": "sample-2",
+			"scores": { "accuracy": { "value": 0.0 } },
+			"events": [
+				{
+					"type": "model",
+					"timestamp": "2025-01-01T00:01:00Z",
+					"duration_ms": 800,
+					"model": "claude-sonnet-4-20250514",
+					"input_tokens": 300,
+					"output_tokens": 100
+				},
+				{
+					"type": "tool",
+					"timestamp": "2025-01-01T00:01:01Z",
+					"duration_ms": 30,
+					"tool_name": "write_file",
+					"error": "Permission denied"
+				}
+			]
+		}
+	],
+	"results": { "scores": { "accuracy": 0.425 } }
 }

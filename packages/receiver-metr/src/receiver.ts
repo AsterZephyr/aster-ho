@@ -1,7 +1,7 @@
-import type { Tracer } from "@opentelemetry/api";
-import { SpanKind, SpanStatusCode, context, trace } from "@opentelemetry/api";
 import type { ReceiverAdapter } from "@ho/sdk";
 import { GenAIAttributes, HoAttributes } from "@ho/sdk";
+import type { Tracer } from "@opentelemetry/api";
+import { SpanKind, SpanStatusCode, context, trace } from "@opentelemetry/api";
 import { parseScoreLog } from "./parser.js";
 import type { METRScoreLog } from "./types.js";
 

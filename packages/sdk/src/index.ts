@@ -1,6 +1,10 @@
 export { init, shutdown } from "./init.js";
 export { withSpan } from "./with-span.js";
-export { withAgentLoop, AgentLoopTimeoutError, AgentLoopMaxIterationsError } from "./with-agent-loop.js";
+export {
+	withAgentLoop,
+	AgentLoopTimeoutError,
+	AgentLoopMaxIterationsError,
+} from "./with-agent-loop.js";
 export type { AgentLoopContext, AgentLoopOptions } from "./with-agent-loop.js";
 export { wrapLLMCall } from "./wrap.js";
 export type { WrapLLMCallOptions } from "./wrap.js";

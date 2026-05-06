@@ -35,9 +35,10 @@ export async function baselineShow(
 	}
 }
 
-export async function baselineRecompute(
-	options: { config: string },
-): Promise<{ exitCode: number; output: string }> {
+export async function baselineRecompute(options: { config: string }): Promise<{
+	exitCode: number;
+	output: string;
+}> {
 	const config = await loadConfig(options.config);
 	const dbPath = config.baseline?.db_path;
 
@@ -92,10 +93,7 @@ function queryBaselines(
 	return results;
 }
 
-export function formatBaselines(
-	baselines: readonly BaselineRow[],
-	format: "md" | "json",
-): string {
+export function formatBaselines(baselines: readonly BaselineRow[], format: "md" | "json"): string {
 	if (baselines.length === 0) {
 		return format === "json" ? "[]" : "No baselines found.";
 	}

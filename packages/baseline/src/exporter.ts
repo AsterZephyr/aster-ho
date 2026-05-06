@@ -1,7 +1,7 @@
-import type { ReadableSpan, SpanExporter } from "@opentelemetry/sdk-trace-base";
+import { GenAIAttributes, HoAttributes } from "@ho/sdk";
 import type { ExportResult } from "@opentelemetry/core";
 import { ExportResultCode } from "@opentelemetry/core";
-import { GenAIAttributes, HoAttributes } from "@ho/sdk";
+import type { ReadableSpan, SpanExporter } from "@opentelemetry/sdk-trace-base";
 import { BaselineStore } from "./store.js";
 import type { BaselineStoreConfig, MetricEntry } from "./types.js";
 

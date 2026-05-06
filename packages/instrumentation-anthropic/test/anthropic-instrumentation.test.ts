@@ -1,13 +1,13 @@
-import { describe, expect, it, beforeEach, afterEach } from "vitest";
-import { context, SpanKind, SpanStatusCode, trace } from "@opentelemetry/api";
+import { SUPPRESS_INSTRUMENTATION_KEY } from "@ho/sdk";
+import { SpanKind, SpanStatusCode, context, trace } from "@opentelemetry/api";
 import { AsyncHooksContextManager } from "@opentelemetry/context-async-hooks";
 import {
 	BasicTracerProvider,
 	InMemorySpanExporter,
 	SimpleSpanProcessor,
 } from "@opentelemetry/sdk-trace-base";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { AnthropicInstrumentation } from "../src/index.js";
-import { SUPPRESS_INSTRUMENTATION_KEY } from "@ho/sdk";
 
 describe("AnthropicInstrumentation", () => {
 	let exporter: InMemorySpanExporter;
@@ -72,7 +72,9 @@ describe("AnthropicInstrumentation", () => {
 
 		const patched = (instrumentation as any)._patchCreate()(failing);
 
-		await expect(patched.call({}, { model: "claude-sonnet-4-20250514" })).rejects.toThrow("overloaded_error");
+		await expect(patched.call({}, { model: "claude-sonnet-4-20250514" })).rejects.toThrow(
+			"overloaded_error",
+		);
 
 		const spans = exporter.getFinishedSpans();
 		expect(spans).toHaveLength(1);
@@ -90,7 +92,9 @@ describe("AnthropicInstrumentation", () => {
 		const patched = (instrumentation as any)._patchCreate()(mockCreate);
 
 		const suppressedCtx = context.active().setValue(SUPPRESS_INSTRUMENTATION_KEY, true);
-		await context.with(suppressedCtx, () => patched.call({}, { model: "claude-sonnet-4-20250514" }));
+		await context.with(suppressedCtx, () =>
+			patched.call({}, { model: "claude-sonnet-4-20250514" }),
+		);
 
 		expect(called).toBe(true);
 		const spans = exporter.getFinishedSpans();
@@ -105,12 +109,15 @@ describe("AnthropicInstrumentation", () => {
 		});
 
 		const patched = (instrumentation as any)._patchCreate()(mockCreate);
-		await patched.call({}, {
-			model: "claude-sonnet-4-20250514",
-			temperature: 0.7,
-			top_p: 0.95,
-			max_tokens: 1024,
-		});
+		await patched.call(
+			{},
+			{
+				model: "claude-sonnet-4-20250514",
+				temperature: 0.7,
+				top_p: 0.95,
+				max_tokens: 1024,
+			},
+		);
 
 		const span = exporter.getFinishedSpans()[0];
 		expect(span.attributes["gen_ai.request.temperature"]).toBe(0.7);

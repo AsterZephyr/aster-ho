@@ -1,14 +1,15 @@
-import { createServer, type Server } from "node:http";
-import type { ReadableSpan, SpanExporter } from "@opentelemetry/sdk-trace-base";
+import { type Server, createServer } from "node:http";
 import type { ExportResult } from "@opentelemetry/core";
 import { ExportResultCode } from "@opentelemetry/core";
-import type { PrometheusConfig } from "./types.js";
+import type { ReadableSpan, SpanExporter } from "@opentelemetry/sdk-trace-base";
 import { Aggregator } from "./aggregator.js";
 import { convertSpans } from "./connector.js";
+import type { PrometheusConfig } from "./types.js";
 
 export class PrometheusExporter implements SpanExporter {
 	private readonly aggregator: Aggregator;
-	private readonly config: Required<Pick<PrometheusConfig, "port" | "path" | "prefix">> & PrometheusConfig;
+	private readonly config: Required<Pick<PrometheusConfig, "port" | "path" | "prefix">> &
+		PrometheusConfig;
 	private server: Server | undefined;
 
 	constructor(config: PrometheusConfig) {
@@ -53,14 +54,14 @@ export class PrometheusExporter implements SpanExporter {
 		});
 
 		await new Promise<void>((resolve) => {
-			this.server!.listen(this.config.port, resolve);
+			this.server?.listen(this.config.port, resolve);
 		});
 	}
 
 	async shutdown(): Promise<void> {
 		if (!this.server) return;
 		await new Promise<void>((resolve) => {
-			this.server!.close(() => resolve());
+			this.server?.close(() => resolve());
 		});
 		this.server = undefined;
 	}

@@ -1,14 +1,14 @@
-import { describe, it, expect } from "vitest";
 import { resolve } from "node:path";
-import { loadConfig, validateConfig } from "../src/config-loader.js";
-import { validate } from "../src/validate.js";
-import { replay } from "../src/replay.js";
-import { buildExporters } from "../src/serve.js";
+import { describe, expect, it } from "vitest";
 import { formatBaselines } from "../src/baseline.js";
-import { parseTimeWindow, computeComparison, formatComparison } from "../src/compare.js";
+import { computeComparison, formatComparison, parseTimeWindow } from "../src/compare.js";
 import type { ComparisonResult } from "../src/compare.js";
+import { loadConfig, validateConfig } from "../src/config-loader.js";
+import { replay } from "../src/replay.js";
 import { buildSummary, formatReport } from "../src/report.js";
 import { analyzeTrace, formatRootCause } from "../src/root-cause.js";
+import { buildExporters } from "../src/serve.js";
+import { validate } from "../src/validate.js";
 
 const fixtures = resolve(import.meta.dirname, "fixtures");
 
@@ -123,7 +123,15 @@ describe("baseline - formatBaselines", () => {
 				model: "gpt-4",
 				tool: "search",
 				metric: "latency_ms",
-				stats: { count: 100, mean: 42.5, stddev: 15.7, p50: 40, p95: 120.3, p99: 200, lastUpdated: 1700000000000 },
+				stats: {
+					count: 100,
+					mean: 42.5,
+					stddev: 15.7,
+					p50: 40,
+					p95: 120.3,
+					p99: 200,
+					lastUpdated: 1700000000000,
+				},
 			},
 		];
 
@@ -140,7 +148,15 @@ describe("baseline - formatBaselines", () => {
 				model: "claude-3",
 				tool: "embed",
 				metric: "cost_usd",
-				stats: { count: 50, mean: 0.003, stddev: 0.001, p50: 0.0025, p95: 0.005, p99: 0.008, lastUpdated: 1700000000000 },
+				stats: {
+					count: 50,
+					mean: 0.003,
+					stddev: 0.001,
+					p50: 0.0025,
+					p95: 0.005,
+					p99: 0.008,
+					lastUpdated: 1700000000000,
+				},
 			},
 		];
 
@@ -291,9 +307,9 @@ describe("root-cause - analyzeTrace", () => {
 		const result = analyzeTrace("trace-1", spans);
 		expect(result.traceId).toBe("trace-1");
 		expect(result.triggerSpan).toBeDefined();
-		expect(result.triggerSpan!.spanId).toBe("span-2");
-		expect(result.triggerSpan!.name).toBe("tool-call");
-		expect(result.triggerSpan!.error).toBe("API timeout");
+		expect(result.triggerSpan?.spanId).toBe("span-2");
+		expect(result.triggerSpan?.name).toBe("tool-call");
+		expect(result.triggerSpan?.error).toBe("API timeout");
 		expect(result.cascadeSpans).toHaveLength(1);
 		expect(result.cascadeSpans[0].spanId).toBe("span-3");
 		expect(result.tokenWaste).toBe(525); // (200+100) + (150+75)

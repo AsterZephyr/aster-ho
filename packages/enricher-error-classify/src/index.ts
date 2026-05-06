@@ -1,8 +1,8 @@
+import type { SpanEnricher } from "@ho/sdk";
+import { GenAIAttributes, HoAttributes } from "@ho/sdk";
 import { SpanStatusCode } from "@opentelemetry/api";
 import type { Attributes } from "@opentelemetry/api";
 import type { ReadableSpan } from "@opentelemetry/sdk-trace-base";
-import type { SpanEnricher } from "@ho/sdk";
-import { GenAIAttributes, HoAttributes } from "@ho/sdk";
 import { computeFingerprint } from "./fingerprint.js";
 
 export { computeFingerprint } from "./fingerprint.js";
@@ -27,19 +27,40 @@ export interface ErrorClassifyEnricherConfig {
 }
 
 const DEFAULT_RULES: ClassificationRule[] = [
-	{ pattern: /schema validation failed|invalid response format|unexpected response type/i, category: "schema_mismatch" },
-	{ pattern: /json parse|schema validation|missing required|invalid.*argument/i, category: "invalid_arguments" },
+	{
+		pattern: /schema validation failed|invalid response format|unexpected response type/i,
+		category: "schema_mismatch",
+	},
+	{
+		pattern: /json parse|schema validation|missing required|invalid.*argument/i,
+		category: "invalid_arguments",
+	},
 	{ pattern: /rate limit|overloaded|503|529|too many requests/i, category: "provider_error" },
 	{ pattern: /timeout|deadline exceeded|timed out/i, category: "timeout" },
 	{ pattern: /cancelled|aborted|abort/i, category: "user_aborted" },
 	{ pattern: /context length|token limit|max.*tokens.*exceeded/i, category: "context_overflow" },
 	{ pattern: /401|403|invalid api key|unauthorized|forbidden/i, category: "auth_error" },
 	{ pattern: /ECONNREFUSED|ENOTFOUND|DNS|socket hang up|ETIMEDOUT/i, category: "network_error" },
-	{ pattern: /content policy|safety filter|content_filter|moderation/i, category: "content_filter" },
-	{ pattern: /tool not found|unknown tool|no such function|function not available/i, category: "tool_not_found" },
-	{ pattern: /tool execution failed|tool error|function threw|runtime error in tool/i, category: "tool_execution_error" },
-	{ pattern: /quota exceeded|billing|rate limit exceeded|insufficient credits/i, category: "quota_exceeded" },
-	{ pattern: /model not found|model deprecated|model unavailable|model does not exist/i, category: "model_not_available" },
+	{
+		pattern: /content policy|safety filter|content_filter|moderation/i,
+		category: "content_filter",
+	},
+	{
+		pattern: /tool not found|unknown tool|no such function|function not available/i,
+		category: "tool_not_found",
+	},
+	{
+		pattern: /tool execution failed|tool error|function threw|runtime error in tool/i,
+		category: "tool_execution_error",
+	},
+	{
+		pattern: /quota exceeded|billing|rate limit exceeded|insufficient credits/i,
+		category: "quota_exceeded",
+	},
+	{
+		pattern: /model not found|model deprecated|model unavailable|model does not exist/i,
+		category: "model_not_available",
+	},
 ];
 
 export class ErrorClassifyEnricher implements SpanEnricher {

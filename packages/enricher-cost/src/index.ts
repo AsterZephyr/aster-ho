@@ -1,7 +1,7 @@
+import type { SpanEnricher } from "@ho/sdk";
 import type { Attributes } from "@opentelemetry/api";
 import type { ReadableSpan } from "@opentelemetry/sdk-trace-base";
-import type { SpanEnricher } from "@ho/sdk";
-import { defaultPricing, type ModelPricing } from "./pricing.js";
+import { type ModelPricing, defaultPricing } from "./pricing.js";
 
 export { defaultPricing, mergePricing, type ModelPricing } from "./pricing.js";
 

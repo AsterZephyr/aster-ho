@@ -1,7 +1,11 @@
-import { describe, expect, it, beforeEach, afterEach } from "vitest";
 import { context, trace } from "@opentelemetry/api";
 import { AsyncHooksContextManager } from "@opentelemetry/context-async-hooks";
-import { BasicTracerProvider, InMemorySpanExporter, SimpleSpanProcessor } from "@opentelemetry/sdk-trace-base";
+import {
+	BasicTracerProvider,
+	InMemorySpanExporter,
+	SimpleSpanProcessor,
+} from "@opentelemetry/sdk-trace-base";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { METRReceiver, parseScoreLog } from "../src/index.js";
 import fixture from "./fixtures/score-log.json";
 
@@ -61,9 +65,9 @@ describe("METRReceiver", () => {
 		const spans = exporter.getFinishedSpans();
 		const scoreSpan = spans.find((s) => s.name === "eval/score");
 		expect(scoreSpan).toBeDefined();
-		expect(scoreSpan!.attributes["ho.eval.score"]).toBe(0.75);
-		expect(scoreSpan!.attributes["ho.eval.max_score"]).toBe(1.0);
-		expect(scoreSpan!.attributes["ho.eval.normalized_score"]).toBe(0.75);
+		expect(scoreSpan?.attributes["ho.eval.score"]).toBe(0.75);
+		expect(scoreSpan?.attributes["ho.eval.max_score"]).toBe(1.0);
+		expect(scoreSpan?.attributes["ho.eval.normalized_score"]).toBe(0.75);
 	});
 
 	it("sets error on non-zero exit code exec spans", () => {
@@ -74,7 +78,7 @@ describe("METRReceiver", () => {
 		const spans = exporter.getFinishedSpans();
 		const errorSpan = spans.find((s) => s.status.code === 2);
 		expect(errorSpan).toBeDefined();
-		expect(errorSpan!.attributes["ho.sandbox.exit_code"]).toBe(1);
+		expect(errorSpan?.attributes["ho.sandbox.exit_code"]).toBe(1);
 	});
 
 	it("adds intermediate score events to score span", () => {

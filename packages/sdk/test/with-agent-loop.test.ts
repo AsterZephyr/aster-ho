@@ -1,16 +1,12 @@
-import { describe, expect, it, beforeEach, afterEach } from "vitest";
-import { context, SpanStatusCode, trace } from "@opentelemetry/api";
+import { SpanStatusCode, context, trace } from "@opentelemetry/api";
 import { AsyncHooksContextManager } from "@opentelemetry/context-async-hooks";
 import {
 	BasicTracerProvider,
 	InMemorySpanExporter,
 	SimpleSpanProcessor,
 } from "@opentelemetry/sdk-trace-base";
-import {
-	withAgentLoop,
-	AgentLoopTimeoutError,
-	AgentLoopMaxIterationsError,
-} from "../src/index.js";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { AgentLoopMaxIterationsError, AgentLoopTimeoutError, withAgentLoop } from "../src/index.js";
 
 describe("withAgentLoop", () => {
 	let exporter: InMemorySpanExporter;
@@ -40,8 +36,8 @@ describe("withAgentLoop", () => {
 		const spans = exporter.getFinishedSpans();
 		const root = spans.find((s) => s.name === "invoke_agent test-agent");
 		expect(root).toBeDefined();
-		expect(root!.attributes["gen_ai.operation.name"]).toBe("invoke_agent");
-		expect(root!.attributes["gen_ai.agent.name"]).toBe("test-agent");
+		expect(root?.attributes["gen_ai.operation.name"]).toBe("invoke_agent");
+		expect(root?.attributes["gen_ai.agent.name"]).toBe("test-agent");
 	});
 
 	it("creates flat sibling tool spans under root", async () => {

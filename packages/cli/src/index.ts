@@ -1,18 +1,15 @@
 import { Command } from "commander";
-import { validate } from "./validate.js";
-import { replay } from "./replay.js";
-import { serve } from "./serve.js";
-import { baselineShow, baselineRecompute } from "./baseline.js";
+import { baselineRecompute, baselineShow } from "./baseline.js";
 import { compare } from "./compare.js";
+import { replay } from "./replay.js";
 import { report } from "./report.js";
 import { rootCause } from "./root-cause.js";
+import { serve } from "./serve.js";
+import { validate } from "./validate.js";
 
 const program = new Command();
 
-program
-	.name("ho")
-	.description("GenAI agent observability CLI")
-	.version("0.1.0");
+program.name("ho").description("GenAI agent observability CLI").version("0.1.0");
 
 program
 	.command("validate")

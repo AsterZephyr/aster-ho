@@ -1,7 +1,7 @@
-import type { Attributes, Tracer } from "@opentelemetry/api";
-import { SpanKind, SpanStatusCode, context, trace } from "@opentelemetry/api";
 import type { ReceiverAdapter } from "@ho/sdk";
 import { GenAIAttributes, HoAttributes } from "@ho/sdk";
+import type { Attributes, Tracer } from "@opentelemetry/api";
+import { SpanKind, SpanStatusCode, context, trace } from "@opentelemetry/api";
 import { parseEvalLog } from "./parser.js";
 import type { InspectEvalLog, InspectEvent, InspectSample } from "./types.js";
 
@@ -73,8 +73,10 @@ export class InspectAIReceiver implements ReceiverAdapter {
 		if (event.type === "model") {
 			attributes["gen_ai.operation.name"] = "chat";
 			if (event.model) attributes[GenAIAttributes.REQUEST_MODEL] = event.model;
-			if (event.input_tokens !== undefined) attributes[GenAIAttributes.USAGE_INPUT_TOKENS] = event.input_tokens;
-			if (event.output_tokens !== undefined) attributes[GenAIAttributes.USAGE_OUTPUT_TOKENS] = event.output_tokens;
+			if (event.input_tokens !== undefined)
+				attributes[GenAIAttributes.USAGE_INPUT_TOKENS] = event.input_tokens;
+			if (event.output_tokens !== undefined)
+				attributes[GenAIAttributes.USAGE_OUTPUT_TOKENS] = event.output_tokens;
 		} else if (event.type === "tool") {
 			attributes["gen_ai.operation.name"] = "execute_tool";
 			if (event.tool_name) attributes[GenAIAttributes.TOOL_NAME] = event.tool_name;
@@ -82,7 +84,8 @@ export class InspectAIReceiver implements ReceiverAdapter {
 			attributes["gen_ai.operation.name"] = "execute_tool";
 			attributes[GenAIAttributes.TOOL_NAME] = "sandbox.exec";
 			if (event.command) attributes[GenAIAttributes.TOOL_CALL_ARGUMENTS] = event.command;
-			if (event.exit_code !== undefined) attributes[HoAttributes.SANDBOX_EXIT_CODE] = event.exit_code;
+			if (event.exit_code !== undefined)
+				attributes[HoAttributes.SANDBOX_EXIT_CODE] = event.exit_code;
 		}
 
 		tracer.startActiveSpan(spanName, { kind: SpanKind.INTERNAL, attributes }, (span) => {
@@ -95,11 +98,16 @@ export class InspectAIReceiver implements ReceiverAdapter {
 
 	private eventSpanName(event: InspectEvent): string {
 		switch (event.type) {
-			case "model": return `chat ${event.model ?? "unknown"}`;
-			case "tool": return `tool/${event.tool_name ?? "unknown"}`;
-			case "sandbox": return `sandbox/exec`;
-			case "score": return `eval/score`;
-			default: return `event/${event.type}`;
+			case "model":
+				return `chat ${event.model ?? "unknown"}`;
+			case "tool":
+				return `tool/${event.tool_name ?? "unknown"}`;
+			case "sandbox":
+				return "sandbox/exec";
+			case "score":
+				return "eval/score";
+			default:
+				return `event/${event.type}`;
 		}
 	}
 }

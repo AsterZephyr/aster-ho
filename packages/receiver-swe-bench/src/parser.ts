@@ -22,7 +22,8 @@ export function parseReport(data: unknown): SWEBenchReport {
 		model: obj.model,
 		dataset: typeof obj.dataset === "string" ? obj.dataset : undefined,
 		instances,
-		total_duration_ms: typeof obj.total_duration_ms === "number" ? obj.total_duration_ms : undefined,
+		total_duration_ms:
+			typeof obj.total_duration_ms === "number" ? obj.total_duration_ms : undefined,
 	};
 }
 

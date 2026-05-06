@@ -1,9 +1,9 @@
-import type { Attributes } from "@opentelemetry/api";
-import type { ReadableSpan } from "@opentelemetry/sdk-trace-base";
 import type { SpanEnricher } from "@ho/sdk";
 import { HoAttributes } from "@ho/sdk";
-import type { ContextRotConfig } from "./types.js";
+import type { Attributes } from "@opentelemetry/api";
+import type { ReadableSpan } from "@opentelemetry/sdk-trace-base";
 import { createTraceState, updateWithSpan } from "./accumulator.js";
+import type { ContextRotConfig } from "./types.js";
 import type { TraceState } from "./types.js";
 
 export class ContextRotEnricher implements SpanEnricher {

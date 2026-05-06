@@ -1,7 +1,11 @@
-import { describe, expect, it, beforeEach, afterEach } from "vitest";
 import { context, trace } from "@opentelemetry/api";
 import { AsyncHooksContextManager } from "@opentelemetry/context-async-hooks";
-import { BasicTracerProvider, InMemorySpanExporter, SimpleSpanProcessor } from "@opentelemetry/sdk-trace-base";
+import {
+	BasicTracerProvider,
+	InMemorySpanExporter,
+	SimpleSpanProcessor,
+} from "@opentelemetry/sdk-trace-base";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { ModalSandboxReceiver } from "../src/index.js";
 
 describe("ModalSandboxReceiver", () => {
@@ -26,7 +30,16 @@ describe("ModalSandboxReceiver", () => {
 	it("creates span for exec event", () => {
 		const receiver = new ModalSandboxReceiver();
 		receiver.init(trace.getTracer("test"));
-		receiver.ingest({ container_id: "ctr-1", function_name: "solve", action: "exec", command: "python run.py", exit_code: 0, duration_ms: 5000, started_at: "", completed_at: "" });
+		receiver.ingest({
+			container_id: "ctr-1",
+			function_name: "solve",
+			action: "exec",
+			command: "python run.py",
+			exit_code: 0,
+			duration_ms: 5000,
+			started_at: "",
+			completed_at: "",
+		});
 
 		const span = exporter.getFinishedSpans()[0];
 		expect(span.name).toBe("sandbox/exec python");
@@ -37,7 +50,14 @@ describe("ModalSandboxReceiver", () => {
 	it("creates span for terminate event", () => {
 		const receiver = new ModalSandboxReceiver();
 		receiver.init(trace.getTracer("test"));
-		receiver.ingest({ container_id: "ctr-2", function_name: "worker", action: "terminate", duration_ms: 0, started_at: "", completed_at: "" });
+		receiver.ingest({
+			container_id: "ctr-2",
+			function_name: "worker",
+			action: "terminate",
+			duration_ms: 0,
+			started_at: "",
+			completed_at: "",
+		});
 
 		const span = exporter.getFinishedSpans()[0];
 		expect(span.name).toBe("sandbox/terminate worker");
@@ -47,7 +67,17 @@ describe("ModalSandboxReceiver", () => {
 	it("sets error on failure", () => {
 		const receiver = new ModalSandboxReceiver();
 		receiver.init(trace.getTracer("test"));
-		receiver.ingest({ container_id: "ctr-3", function_name: "run", action: "exec", command: "x", exit_code: 1, duration_ms: 100, error: "OOM killed", started_at: "", completed_at: "" });
+		receiver.ingest({
+			container_id: "ctr-3",
+			function_name: "run",
+			action: "exec",
+			command: "x",
+			exit_code: 1,
+			duration_ms: 100,
+			error: "OOM killed",
+			started_at: "",
+			completed_at: "",
+		});
 
 		const span = exporter.getFinishedSpans()[0];
 		expect(span.status.code).toBe(2);
@@ -57,7 +87,14 @@ describe("ModalSandboxReceiver", () => {
 	it("includes function_name attribute", () => {
 		const receiver = new ModalSandboxReceiver();
 		receiver.init(trace.getTracer("test"));
-		receiver.ingest({ container_id: "ctr-4", function_name: "my_function", action: "spawn", duration_ms: 200, started_at: "", completed_at: "" });
+		receiver.ingest({
+			container_id: "ctr-4",
+			function_name: "my_function",
+			action: "spawn",
+			duration_ms: 200,
+			started_at: "",
+			completed_at: "",
+		});
 
 		const span = exporter.getFinishedSpans()[0];
 		expect(span.attributes["ho.sandbox.function_name"]).toBe("my_function");

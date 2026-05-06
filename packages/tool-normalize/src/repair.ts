@@ -88,5 +88,10 @@ export function repairAndParse(
 		}
 	}
 
-	return { success: false, value: {}, repaired: false, error: `Failed to parse: ${raw.slice(0, 100)}` };
+	return {
+		success: false,
+		value: {},
+		repaired: false,
+		error: `Failed to parse: ${raw.slice(0, 100)}`,
+	};
 }

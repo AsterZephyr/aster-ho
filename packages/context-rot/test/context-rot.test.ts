@@ -1,7 +1,7 @@
-import { describe, expect, it, vi } from "vitest";
 import { SpanStatusCode } from "@opentelemetry/api";
 import type { Attributes, SpanContext } from "@opentelemetry/api";
 import type { ReadableSpan } from "@opentelemetry/sdk-trace-base";
+import { describe, expect, it, vi } from "vitest";
 import { ContextRotEnricher } from "../src/enricher.js";
 
 function mockSpan(opts: {

@@ -1,12 +1,12 @@
 import { performance } from "node:perf_hooks";
+import { SUPPRESS_INSTRUMENTATION_KEY } from "@ho/sdk";
 import type { Span } from "@opentelemetry/api";
-import { context, SpanKind, SpanStatusCode, trace } from "@opentelemetry/api";
+import { SpanKind, SpanStatusCode, context, trace } from "@opentelemetry/api";
 import {
 	InstrumentationBase,
 	InstrumentationNodeModuleDefinition,
 } from "@opentelemetry/instrumentation";
 import type { InstrumentationConfig } from "@opentelemetry/instrumentation";
-import { SUPPRESS_INSTRUMENTATION_KEY } from "@ho/sdk";
 import { requestAttributes, responseAttributes } from "./attributes.js";
 import { wrapStream } from "./wrap-stream.js";
 
@@ -51,13 +51,10 @@ export class OpenAIInstrumentation extends InstrumentationBase<OpenAIInstrumenta
 				const model = String(body.model ?? "unknown");
 				const isStream = body.stream === true;
 
-				const span = instrumentation.tracer.startSpan(
-					`chat ${model}`,
-					{
-						kind: SpanKind.CLIENT,
-						attributes: requestAttributes(body),
-					},
-				);
+				const span = instrumentation.tracer.startSpan(`chat ${model}`, {
+					kind: SpanKind.CLIENT,
+					attributes: requestAttributes(body),
+				});
 
 				if (isStream) {
 					return instrumentation._handleStream(original, this, args, span);

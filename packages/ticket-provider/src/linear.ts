@@ -1,9 +1,4 @@
-import type {
-	LinearTicketConfig,
-	TicketProvider,
-	TicketRequest,
-	TicketResult,
-} from "./types.js";
+import type { LinearTicketConfig, TicketProvider, TicketRequest, TicketResult } from "./types.js";
 
 interface LinearIssueCreateResponse {
 	readonly data?: {
@@ -70,16 +65,11 @@ export class LinearTicketProvider implements TicketProvider {
 			},
 		};
 
-		const response = await this.graphql<LinearIssueCreateResponse>(
-			mutation,
-			variables,
-		);
+		const response = await this.graphql<LinearIssueCreateResponse>(mutation, variables);
 
 		const issueCreate = response.data?.issueCreate;
 		if (!issueCreate?.success || !issueCreate.issue) {
-			const errorMsg =
-				response.errors?.map((e) => e.message).join(", ") ??
-				"Unknown error";
+			const errorMsg = response.errors?.map((e) => e.message).join(", ") ?? "Unknown error";
 			throw new Error(`Linear issue creation failed: ${errorMsg}`);
 		}
 
@@ -114,10 +104,7 @@ export class LinearTicketProvider implements TicketProvider {
 		};
 
 		try {
-			const response = await this.graphql<LinearIssueSearchResponse>(
-				query,
-				variables,
-			);
+			const response = await this.graphql<LinearIssueSearchResponse>(query, variables);
 
 			const nodes = response.data?.issueSearch?.nodes;
 			if (!nodes || nodes.length === 0) {
@@ -129,9 +116,7 @@ export class LinearTicketProvider implements TicketProvider {
 				id: issue.id,
 				url: issue.url,
 				status: this.mapState(issue.state?.name),
-				createdAt: issue.createdAt
-					? new Date(issue.createdAt).getTime()
-					: Date.now(),
+				createdAt: issue.createdAt ? new Date(issue.createdAt).getTime() : Date.now(),
 			};
 		} catch {
 			return undefined;
@@ -143,9 +128,7 @@ export class LinearTicketProvider implements TicketProvider {
 		return request.body + footer;
 	}
 
-	private mapState(
-		stateName: string | undefined,
-	): "open" | "closed" | "in_progress" {
+	private mapState(stateName: string | undefined): "open" | "closed" | "in_progress" {
 		if (!stateName) return "open";
 		const lower = stateName.toLowerCase();
 		if (lower === "done" || lower === "canceled" || lower === "cancelled") {
@@ -157,10 +140,7 @@ export class LinearTicketProvider implements TicketProvider {
 		return "open";
 	}
 
-	private async graphql<T>(
-		query: string,
-		variables: Record<string, unknown>,
-	): Promise<T> {
+	private async graphql<T>(query: string, variables: Record<string, unknown>): Promise<T> {
 		const response = await fetch("https://api.linear.app/graphql", {
 			method: "POST",
 			headers: {
@@ -171,9 +151,7 @@ export class LinearTicketProvider implements TicketProvider {
 		});
 
 		if (!response.ok) {
-			throw new Error(
-				`Linear API request failed: ${response.status} ${response.statusText}`,
-			);
+			throw new Error(`Linear API request failed: ${response.status} ${response.statusText}`);
 		}
 
 		return (await response.json()) as T;

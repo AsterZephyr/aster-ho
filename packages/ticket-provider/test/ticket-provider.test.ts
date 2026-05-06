@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { DedupCache } from "../src/dedup.js";
 import { GitHubTicketProvider } from "../src/github.js";
 import { LinearTicketProvider } from "../src/linear.js";
@@ -113,9 +113,7 @@ describe("GitHubTicketProvider", () => {
 	it("findDuplicate returns undefined on error", async () => {
 		const provider = new GitHubTicketProvider({ repo: "owner/repo" });
 
-		vi.spyOn(provider, "execGh").mockRejectedValue(
-			new Error("gh not found"),
-		);
+		vi.spyOn(provider, "execGh").mockRejectedValue(new Error("gh not found"));
 
 		const result = await provider.findDuplicate("any-fp");
 		expect(result).toBeUndefined();
@@ -145,9 +143,7 @@ describe("LinearTicketProvider", () => {
 
 		const fetchSpy = vi
 			.spyOn(globalThis, "fetch")
-			.mockResolvedValue(
-				new Response(JSON.stringify(mockResponse), { status: 200 }),
-			);
+			.mockResolvedValue(new Response(JSON.stringify(mockResponse), { status: 200 }));
 
 		const request = makeRequest();
 		const result = await provider.createTicket(request);
@@ -168,9 +164,7 @@ describe("LinearTicketProvider", () => {
 		expect(body.query).toContain("issueCreate");
 		expect(body.variables.input.teamId).toBe("team-123");
 		expect(body.variables.input.title).toBe("Test issue");
-		expect(body.variables.input.description).toContain(
-			"<!-- ho-fingerprint: abc123 -->",
-		);
+		expect(body.variables.input.description).toContain("<!-- ho-fingerprint: abc123 -->");
 
 		expect(result.id).toBe("LIN-456");
 		expect(result.url).toBe("https://linear.app/team/issue/LIN-456");
@@ -195,9 +189,7 @@ describe("LinearTicketProvider", () => {
 
 		const fetchSpy = vi
 			.spyOn(globalThis, "fetch")
-			.mockResolvedValue(
-				new Response(JSON.stringify(mockResponse), { status: 200 }),
-			);
+			.mockResolvedValue(new Response(JSON.stringify(mockResponse), { status: 200 }));
 
 		const result = await provider.findDuplicate("unknown-fp");
 		expect(result).toBeUndefined();

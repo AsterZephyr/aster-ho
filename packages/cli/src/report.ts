@@ -1,7 +1,7 @@
 import { BaselineStore } from "@ho/baseline";
 import type { UnknownErrorRecord } from "@ho/baseline";
-import { loadConfig } from "./config-loader.js";
 import { parseTimeWindow } from "./compare.js";
+import { loadConfig } from "./config-loader.js";
 
 export interface ReportOptions {
 	readonly config: string;
@@ -52,15 +52,18 @@ export function buildSummary(store: BaselineStore, since?: string): WeeklySummar
 	const periodStart = now - periodMs;
 
 	const db = (store as any).db;
-	const spanRow = db.prepare(`
+	const spanRow = db
+		.prepare(`
 		SELECT
 			COUNT(*) as total,
 			SUM(CASE WHEN error_category IS NOT NULL THEN 1 ELSE 0 END) as errors
 		FROM span_metrics
 		WHERE timestamp_ms >= ?
-	`).get(periodStart) as { total: number; errors: number };
+	`)
+		.get(periodStart) as { total: number; errors: number };
 
-	const unknownErrors = store.getUnknownErrors(1)
+	const unknownErrors = store
+		.getUnknownErrors(1)
 		.filter((e: UnknownErrorRecord) => e.lastSeen >= periodStart)
 		.map((e: UnknownErrorRecord) => ({
 			fingerprint: e.fingerprint,

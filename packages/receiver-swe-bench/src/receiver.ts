@@ -1,7 +1,7 @@
-import type { Tracer } from "@opentelemetry/api";
-import { SpanKind, SpanStatusCode, context, trace } from "@opentelemetry/api";
 import type { ReceiverAdapter } from "@ho/sdk";
 import { HoAttributes } from "@ho/sdk";
+import type { Tracer } from "@opentelemetry/api";
+import { SpanKind, SpanStatusCode, context, trace } from "@opentelemetry/api";
 import { parseReport } from "./parser.js";
 import type { SWEBenchReport } from "./types.js";
 
@@ -37,9 +37,8 @@ export class SWEBenchReceiver implements ReceiverAdapter {
 					"gen_ai.request.model": report.model,
 					"ho.eval.total_samples": report.instances.length,
 					"ho.eval.resolved_count": resolvedCount,
-					"ho.eval.resolve_rate": report.instances.length > 0
-						? resolvedCount / report.instances.length
-						: 0,
+					"ho.eval.resolve_rate":
+						report.instances.length > 0 ? resolvedCount / report.instances.length : 0,
 				},
 			},
 			(runSpan) => {

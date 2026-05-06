@@ -1,10 +1,10 @@
-import { describe, expect, it, beforeEach, afterEach } from "vitest";
 import { SpanKind, SpanStatusCode, trace } from "@opentelemetry/api";
 import {
 	BasicTracerProvider,
 	InMemorySpanExporter,
 	SimpleSpanProcessor,
 } from "@opentelemetry/sdk-trace-base";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { OpenAIInstrumentation } from "../src/index.js";
 
 function createMockStream(chunks: unknown[]) {

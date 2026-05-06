@@ -75,9 +75,7 @@ describe("AnthropicToolAdapter", () => {
 
 	describe("encodeResults", () => {
 		it("encodes results to Anthropic tool_result format", () => {
-			const results: UnifiedToolResult[] = [
-				{ callId: "toolu_01", content: { temp: 15 } },
-			];
+			const results: UnifiedToolResult[] = [{ callId: "toolu_01", content: { temp: 15 } }];
 
 			const encoded = adapter.encodeResults(results) as Array<Record<string, unknown>>;
 			expect(encoded[0]).toEqual({

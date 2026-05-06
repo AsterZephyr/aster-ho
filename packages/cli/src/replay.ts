@@ -1,9 +1,9 @@
+import { createReadStream } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { createInterface } from "node:readline";
-import { createReadStream } from "node:fs";
-import { BasicTracerProvider, SimpleSpanProcessor } from "@opentelemetry/sdk-trace-base";
-import { trace } from "@opentelemetry/api";
 import { FileExporter } from "@ho/exporter-file";
+import { trace } from "@opentelemetry/api";
+import { BasicTracerProvider, SimpleSpanProcessor } from "@opentelemetry/sdk-trace-base";
 import { loadConfig } from "./config-loader.js";
 import { buildExporters } from "./serve.js";
 

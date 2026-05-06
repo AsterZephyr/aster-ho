@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
 import { context } from "@opentelemetry/api";
+import { describe, expect, it } from "vitest";
 import { SUPPRESS_INSTRUMENTATION_KEY } from "../src/constants.js";
 
 describe("SUPPRESS_INSTRUMENTATION_KEY", () => {

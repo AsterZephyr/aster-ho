@@ -1,11 +1,11 @@
-import { describe, expect, it, beforeEach, afterEach } from "vitest";
-import { context, SpanStatusCode, trace } from "@opentelemetry/api";
+import { SpanStatusCode, context, trace } from "@opentelemetry/api";
 import { AsyncHooksContextManager } from "@opentelemetry/context-async-hooks";
 import {
 	BasicTracerProvider,
 	InMemorySpanExporter,
 	SimpleSpanProcessor,
 } from "@opentelemetry/sdk-trace-base";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { AnthropicInstrumentation } from "../src/index.js";
 
 async function* makeStreamEvents(events: unknown[]) {
@@ -43,7 +43,10 @@ describe("AnthropicInstrumentation streaming", () => {
 
 	it("wraps streaming response and captures token usage", async () => {
 		const events = [
-			{ type: "message_start", message: { model: "claude-sonnet-4-20250514", usage: { input_tokens: 15 } } },
+			{
+				type: "message_start",
+				message: { model: "claude-sonnet-4-20250514", usage: { input_tokens: 15 } },
+			},
 			{ type: "content_block_start", content_block: { type: "text", text: "" } },
 			{ type: "content_block_delta", delta: { type: "text_delta", text: "Hello" } },
 			{ type: "content_block_delta", delta: { type: "text_delta", text: " world" } },
@@ -76,7 +79,10 @@ describe("AnthropicInstrumentation streaming", () => {
 
 	it("records time to first chunk", async () => {
 		const events = [
-			{ type: "message_start", message: { model: "claude-sonnet-4-20250514", usage: { input_tokens: 5 } } },
+			{
+				type: "message_start",
+				message: { model: "claude-sonnet-4-20250514", usage: { input_tokens: 5 } },
+			},
 			{ type: "message_delta", delta: { stop_reason: "end_turn" }, usage: { output_tokens: 3 } },
 			{ type: "message_stop" },
 		];
@@ -85,16 +91,22 @@ describe("AnthropicInstrumentation streaming", () => {
 		const patched = (instrumentation as any)._patchCreate()(mockCreate);
 
 		const stream = await patched.call({}, { model: "claude-sonnet-4-20250514", stream: true });
-		for await (const _ of stream) {}
+		for await (const _ of stream) {
+		}
 
 		const span = exporter.getFinishedSpans()[0];
 		expect(span.attributes["gen_ai.response.time_to_first_chunk"]).toBeTypeOf("number");
-		expect(span.attributes["gen_ai.response.time_to_first_chunk"] as number).toBeGreaterThanOrEqual(0);
+		expect(span.attributes["gen_ai.response.time_to_first_chunk"] as number).toBeGreaterThanOrEqual(
+			0,
+		);
 	});
 
 	it("records error on stream failure", async () => {
 		async function* failingStream() {
-			yield { type: "message_start", message: { model: "claude-sonnet-4-20250514", usage: { input_tokens: 5 } } };
+			yield {
+				type: "message_start",
+				message: { model: "claude-sonnet-4-20250514", usage: { input_tokens: 5 } },
+			};
 			throw new Error("connection reset");
 		}
 

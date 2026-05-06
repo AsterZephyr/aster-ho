@@ -1,11 +1,11 @@
-import { describe, expect, it, beforeEach, afterEach } from "vitest";
-import { context, SpanStatusCode, trace } from "@opentelemetry/api";
+import { SpanStatusCode, context, trace } from "@opentelemetry/api";
 import { AsyncHooksContextManager } from "@opentelemetry/context-async-hooks";
 import {
 	BasicTracerProvider,
 	InMemorySpanExporter,
 	SimpleSpanProcessor,
 } from "@opentelemetry/sdk-trace-base";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { withSpan } from "../src/index.js";
 
 describe("withSpan", () => {

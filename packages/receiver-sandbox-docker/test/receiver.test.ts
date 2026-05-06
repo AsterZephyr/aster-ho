@@ -1,7 +1,11 @@
-import { describe, expect, it, beforeEach, afterEach } from "vitest";
 import { context, trace } from "@opentelemetry/api";
 import { AsyncHooksContextManager } from "@opentelemetry/context-async-hooks";
-import { BasicTracerProvider, InMemorySpanExporter, SimpleSpanProcessor } from "@opentelemetry/sdk-trace-base";
+import {
+	BasicTracerProvider,
+	InMemorySpanExporter,
+	SimpleSpanProcessor,
+} from "@opentelemetry/sdk-trace-base";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { DockerSandboxReceiver } from "../src/index.js";
 
 describe("DockerSandboxReceiver", () => {
@@ -26,7 +30,14 @@ describe("DockerSandboxReceiver", () => {
 	it("creates a span from exec event", () => {
 		const receiver = new DockerSandboxReceiver();
 		receiver.init(trace.getTracer("test"));
-		receiver.ingest({ container_id: "abc123", command: "python test.py", exit_code: 0, duration_ms: 500, started_at: "2025-01-01T00:00:00Z", completed_at: "2025-01-01T00:00:01Z" });
+		receiver.ingest({
+			container_id: "abc123",
+			command: "python test.py",
+			exit_code: 0,
+			duration_ms: 500,
+			started_at: "2025-01-01T00:00:00Z",
+			completed_at: "2025-01-01T00:00:01Z",
+		});
 
 		const spans = exporter.getFinishedSpans();
 		expect(spans).toHaveLength(1);
@@ -38,7 +49,15 @@ describe("DockerSandboxReceiver", () => {
 	it("sets error status on non-zero exit", () => {
 		const receiver = new DockerSandboxReceiver();
 		receiver.init(trace.getTracer("test"));
-		receiver.ingest({ container_id: "abc", command: "make build", exit_code: 2, duration_ms: 100, stderr: "build failed", started_at: "", completed_at: "" });
+		receiver.ingest({
+			container_id: "abc",
+			command: "make build",
+			exit_code: 2,
+			duration_ms: 100,
+			stderr: "build failed",
+			started_at: "",
+			completed_at: "",
+		});
 
 		const span = exporter.getFinishedSpans()[0];
 		expect(span.status.code).toBe(2);
@@ -49,17 +68,39 @@ describe("DockerSandboxReceiver", () => {
 		const receiver = new DockerSandboxReceiver({ containerFilter: ["allowed-container"] });
 		receiver.init(trace.getTracer("test"));
 
-		receiver.ingest({ container_id: "blocked", command: "ls", exit_code: 0, duration_ms: 10, started_at: "", completed_at: "" });
+		receiver.ingest({
+			container_id: "blocked",
+			command: "ls",
+			exit_code: 0,
+			duration_ms: 10,
+			started_at: "",
+			completed_at: "",
+		});
 		expect(exporter.getFinishedSpans()).toHaveLength(0);
 
-		receiver.ingest({ container_id: "allowed-container", command: "ls", exit_code: 0, duration_ms: 10, started_at: "", completed_at: "" });
+		receiver.ingest({
+			container_id: "allowed-container",
+			command: "ls",
+			exit_code: 0,
+			duration_ms: 10,
+			started_at: "",
+			completed_at: "",
+		});
 		expect(exporter.getFinishedSpans()).toHaveLength(1);
 	});
 
 	it("sets timed_out attribute", () => {
 		const receiver = new DockerSandboxReceiver();
 		receiver.init(trace.getTracer("test"));
-		receiver.ingest({ container_id: "x", command: "sleep 999", exit_code: 137, duration_ms: 30000, timed_out: true, started_at: "", completed_at: "" });
+		receiver.ingest({
+			container_id: "x",
+			command: "sleep 999",
+			exit_code: 137,
+			duration_ms: 30000,
+			timed_out: true,
+			started_at: "",
+			completed_at: "",
+		});
 
 		const span = exporter.getFinishedSpans()[0];
 		expect(span.attributes["ho.sandbox.timed_out"]).toBe(true);
@@ -68,7 +109,16 @@ describe("DockerSandboxReceiver", () => {
 	it("uses remote parent context when trace_id provided", () => {
 		const receiver = new DockerSandboxReceiver();
 		receiver.init(trace.getTracer("test"));
-		receiver.ingest({ container_id: "x", command: "echo hi", exit_code: 0, duration_ms: 5, trace_id: "aaaabbbbccccddddaaaabbbbccccdddd", span_id: "1122334455667788", started_at: "", completed_at: "" });
+		receiver.ingest({
+			container_id: "x",
+			command: "echo hi",
+			exit_code: 0,
+			duration_ms: 5,
+			trace_id: "aaaabbbbccccddddaaaabbbbccccdddd",
+			span_id: "1122334455667788",
+			started_at: "",
+			completed_at: "",
+		});
 
 		const span = exporter.getFinishedSpans()[0];
 		expect(span.spanContext().traceId).toBe("aaaabbbbccccddddaaaabbbbccccdddd");

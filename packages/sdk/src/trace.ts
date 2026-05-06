@@ -5,7 +5,7 @@ export interface TraceOptions {
 }
 
 export function hoTrace(opts: TraceOptions = {}) {
-	return function (target: unknown, propertyKey: string, descriptor: PropertyDescriptor) {
+	return (target: unknown, propertyKey: string, descriptor: PropertyDescriptor) => {
 		const original = descriptor.value;
 		const spanName = opts.name ?? propertyKey;
 

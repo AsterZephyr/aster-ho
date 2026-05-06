@@ -1,7 +1,7 @@
 import { appendFile, writeFile } from "node:fs/promises";
-import type { ReadableSpan, SpanExporter } from "@opentelemetry/sdk-trace-base";
 import type { ExportResult } from "@opentelemetry/core";
 import { ExportResultCode } from "@opentelemetry/core";
+import type { ReadableSpan, SpanExporter } from "@opentelemetry/sdk-trace-base";
 
 export interface FileExporterConfig {
 	filePath: string;
@@ -38,9 +38,7 @@ export class FileExporter implements SpanExporter {
 
 	export(spans: ReadableSpan[], resultCallback: (result: ExportResult) => void): void {
 		const lines = spans.map((span) => this.serialize(span));
-		const content = lines
-			.map((l) => (this.pretty ? JSON.stringify(l, null, 2) : JSON.stringify(l)))
-			.join("\n") + "\n";
+		const content = `${lines.map((l) => (this.pretty ? JSON.stringify(l, null, 2) : JSON.stringify(l))).join("\n")}\n`;
 
 		this.pending = this.pending
 			.then(() => appendFile(this.filePath, content, "utf-8"))

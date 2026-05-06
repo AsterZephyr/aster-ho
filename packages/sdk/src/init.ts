@@ -1,3 +1,4 @@
+import type { Instrumentation } from "@opentelemetry/instrumentation";
 import { resourceFromAttributes } from "@opentelemetry/resources";
 import {
 	BatchSpanProcessor,
@@ -6,7 +7,6 @@ import {
 } from "@opentelemetry/sdk-trace-base";
 import { NodeTracerProvider } from "@opentelemetry/sdk-trace-node";
 import { ATTR_SERVICE_NAME } from "@opentelemetry/semantic-conventions";
-import type { Instrumentation } from "@opentelemetry/instrumentation";
 import { EnrichingExporter } from "./enriching-exporter.js";
 import type { HoConfig } from "./types.js";
 

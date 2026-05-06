@@ -1,7 +1,7 @@
-import type { Tracer } from "@opentelemetry/api";
-import { SpanKind, SpanStatusCode, context, trace } from "@opentelemetry/api";
 import type { ReceiverAdapter } from "@ho/sdk";
 import { GenAIAttributes, HoAttributes } from "@ho/sdk";
+import type { Tracer } from "@opentelemetry/api";
+import { SpanKind, SpanStatusCode, context, trace } from "@opentelemetry/api";
 import type { DockerExecEvent, DockerSandboxConfig } from "./types.js";
 
 export class DockerSandboxReceiver implements ReceiverAdapter {
@@ -41,14 +41,15 @@ export class DockerSandboxReceiver implements ReceiverAdapter {
 		const tracer = this.tracer!;
 		const cmdName = event.command.split(" ")[0] ?? "";
 
-		const parentCtx = event.trace_id && event.span_id
-			? trace.setSpanContext(context.active(), {
-					traceId: event.trace_id,
-					spanId: event.span_id,
-					traceFlags: 1,
-					isRemote: true,
-				})
-			: context.active();
+		const parentCtx =
+			event.trace_id && event.span_id
+				? trace.setSpanContext(context.active(), {
+						traceId: event.trace_id,
+						spanId: event.span_id,
+						traceFlags: 1,
+						isRemote: true,
+					})
+				: context.active();
 
 		context.with(parentCtx, () => {
 			tracer.startActiveSpan(
@@ -63,7 +64,9 @@ export class DockerSandboxReceiver implements ReceiverAdapter {
 						[HoAttributes.SANDBOX_ID]: event.container_id,
 						[HoAttributes.SANDBOX_EXIT_CODE]: event.exit_code,
 						[HoAttributes.SANDBOX_DURATION_MS]: event.duration_ms,
-						...(event.timed_out !== undefined ? { [HoAttributes.SANDBOX_TIMED_OUT]: event.timed_out } : {}),
+						...(event.timed_out !== undefined
+							? { [HoAttributes.SANDBOX_TIMED_OUT]: event.timed_out }
+							: {}),
 						...(event.container_name ? { "ho.sandbox.container_name": event.container_name } : {}),
 					},
 				},

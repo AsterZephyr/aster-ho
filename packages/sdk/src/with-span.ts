@@ -1,4 +1,4 @@
-import { context, SpanKind, SpanStatusCode, trace } from "@opentelemetry/api";
+import { SpanKind, SpanStatusCode, context, trace } from "@opentelemetry/api";
 import type { Span, Tracer } from "@opentelemetry/api";
 
 export function withSpan<T>(name: string, fn: (span: Span) => Promise<T>): Promise<T> {

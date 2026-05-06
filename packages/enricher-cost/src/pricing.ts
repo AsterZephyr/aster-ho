@@ -11,7 +11,7 @@ export const defaultPricing: Record<string, ModelPricing> = {
 	"gpt-4.1": { inputPerToken: 2e-6, outputPerToken: 8e-6 },
 	"gpt-4.1-mini": { inputPerToken: 0.4e-6, outputPerToken: 1.6e-6 },
 	"gpt-4.1-nano": { inputPerToken: 0.1e-6, outputPerToken: 0.4e-6 },
-	"o3": { inputPerToken: 2e-6, outputPerToken: 8e-6 },
+	o3: { inputPerToken: 2e-6, outputPerToken: 8e-6 },
 	"o3-mini": { inputPerToken: 1.1e-6, outputPerToken: 4.4e-6 },
 	"o4-mini": { inputPerToken: 1.1e-6, outputPerToken: 4.4e-6 },
 	"claude-sonnet-4-5-20250514": { inputPerToken: 3e-6, outputPerToken: 15e-6 },

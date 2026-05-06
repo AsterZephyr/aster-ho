@@ -13,8 +13,8 @@ export function wrapLLMCall<TArgs extends unknown[], TReturn>(
 ): (...args: TArgs) => Promise<TReturn> {
 	const tracer = trace.getTracer("@ho/sdk", "0.1.0");
 
-	return async function (...args: TArgs): Promise<TReturn> {
-		return tracer.startActiveSpan(`chat ${opts.model ?? "unknown"}`, async (span: Span) => {
+	return async (...args: TArgs): Promise<TReturn> =>
+		tracer.startActiveSpan(`chat ${opts.model ?? "unknown"}`, async (span: Span) => {
 			span.setAttribute("gen_ai.operation.name", "chat");
 			span.setAttribute("gen_ai.provider.name", opts.provider);
 			if (opts.model) span.setAttribute("gen_ai.request.model", opts.model);
@@ -33,5 +33,4 @@ export function wrapLLMCall<TArgs extends unknown[], TReturn>(
 				}
 			});
 		});
-	};
 }

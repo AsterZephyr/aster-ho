@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { BaselineStore } from "../src/store.js";
 import type { MetricEntry } from "../src/types.js";
 
@@ -35,8 +35,8 @@ describe("BaselineStore", () => {
 
 		const baseline = store.getBaseline({ model: "claude-3", tool: "bash" }, "latency_ms");
 		expect(baseline).toBeDefined();
-		expect(baseline!.count).toBe(2);
-		expect(baseline!.mean).toBe(150);
+		expect(baseline?.count).toBe(2);
+		expect(baseline?.mean).toBe(150);
 	});
 
 	it("computes correct mean and stddev", () => {
@@ -47,9 +47,9 @@ describe("BaselineStore", () => {
 
 		const baseline = store.getBaseline({ model: "claude-3", tool: "bash" }, "latency_ms");
 		expect(baseline).toBeDefined();
-		expect(baseline!.mean).toBe(20);
+		expect(baseline?.mean).toBe(20);
 		// population stddev of [10, 20, 30] = sqrt(((10-20)^2 + (20-20)^2 + (30-20)^2) / 3) = sqrt(200/3) ~= 8.165
-		expect(baseline!.stddev).toBeCloseTo(8.165, 2);
+		expect(baseline?.stddev).toBeCloseTo(8.165, 2);
 	});
 
 	it("computes percentiles (p50, p95, p99) with 100 known values", () => {
@@ -61,9 +61,9 @@ describe("BaselineStore", () => {
 
 		const baseline = store.getBaseline({ model: "claude-3", tool: "bash" }, "latency_ms");
 		expect(baseline).toBeDefined();
-		expect(baseline!.p50).toBeCloseTo(50.5, 0);
-		expect(baseline!.p95).toBeCloseTo(95.05, 0);
-		expect(baseline!.p99).toBeCloseTo(99.01, 0);
+		expect(baseline?.p50).toBeCloseTo(50.5, 0);
+		expect(baseline?.p95).toBeCloseTo(95.05, 0);
+		expect(baseline?.p99).toBeCloseTo(99.01, 0);
 	});
 
 	it("detects anomaly when value exceeds threshold stddevs from mean", () => {
@@ -123,10 +123,10 @@ describe("BaselineStore", () => {
 
 		const errors = store.getUnknownErrors();
 		expect(errors).toHaveLength(1);
-		expect(errors[0]!.fingerprint).toBe("fp-001");
-		expect(errors[0]!.count).toBe(2);
-		expect(errors[0]!.firstSeen).toBe(1000);
-		expect(errors[0]!.lastSeen).toBe(2000);
+		expect(errors[0]?.fingerprint).toBe("fp-001");
+		expect(errors[0]?.count).toBe(2);
+		expect(errors[0]?.firstSeen).toBe(1000);
+		expect(errors[0]?.lastSeen).toBe(2000);
 	});
 
 	it("marks error as ticketed (markTicketed + verify)", () => {
@@ -140,7 +140,7 @@ describe("BaselineStore", () => {
 		store.markTicketed("fp-002", "TICKET-123", "https://jira.example.com/TICKET-123");
 
 		const errors = store.getUnknownErrors();
-		expect(errors[0]!.ticketId).toBe("TICKET-123");
+		expect(errors[0]?.ticketId).toBe("TICKET-123");
 	});
 
 	it("recompute baselines overwrites old values", () => {
@@ -148,14 +148,14 @@ describe("BaselineStore", () => {
 		store.recomputeBaselines();
 
 		const first = store.getBaseline({ model: "claude-3", tool: "bash" }, "latency_ms");
-		expect(first!.mean).toBe(100);
+		expect(first?.mean).toBe(100);
 
 		store.recordMetric(makeEntry({ latencyMs: 200 }));
 		store.recomputeBaselines();
 
 		const second = store.getBaseline({ model: "claude-3", tool: "bash" }, "latency_ms");
-		expect(second!.mean).toBe(150);
-		expect(second!.count).toBe(2);
+		expect(second?.mean).toBe(150);
+		expect(second?.count).toBe(2);
 	});
 
 	it("empty baseline returns undefined", () => {

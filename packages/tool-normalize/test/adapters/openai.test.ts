@@ -122,9 +122,7 @@ describe("OpenAIToolAdapter", () => {
 		});
 
 		it("passes string content directly", () => {
-			const results: UnifiedToolResult[] = [
-				{ callId: "call_123", content: "Success" },
-			];
+			const results: UnifiedToolResult[] = [{ callId: "call_123", content: "Success" }];
 			const encoded = adapter.encodeResults(results) as Array<Record<string, unknown>>;
 			expect(encoded[0].content).toBe("Success");
 		});

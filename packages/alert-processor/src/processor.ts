@@ -1,13 +1,13 @@
+import type { BaselineKey, BaselineStore } from "@ho/baseline";
+import type { SpanEnricher } from "@ho/sdk";
 import { SpanStatusCode } from "@opentelemetry/api";
 import type { Attributes } from "@opentelemetry/api";
 import type { ReadableSpan } from "@opentelemetry/sdk-trace-base";
-import type { SpanEnricher } from "@ho/sdk";
-import type { BaselineKey, BaselineStore } from "@ho/baseline";
+import { evaluate, evaluateAnomaly } from "./evaluator.js";
 import type { AlertProcessorConfig, AlertRule } from "./types.js";
 import { isAnomalyCondition } from "./types.js";
 import type { WindowState } from "./window.js";
-import { createWindow, pushMetric, getMetricValue } from "./window.js";
-import { evaluate, evaluateAnomaly } from "./evaluator.js";
+import { createWindow, getMetricValue, pushMetric } from "./window.js";
 
 export interface AlertProcessorOptions extends AlertProcessorConfig {
 	readonly baselineStore?: BaselineStore;
@@ -49,7 +49,13 @@ export class AlertProcessor implements SpanEnricher {
 				const updated = pushMetric(window, now, { isError, latencyMs, costUsd });
 				this.windows.set(rule.name, updated);
 
-				const value = this.getAnomalyMetricValue(condition.metric, updated, latencyMs, costUsd, span);
+				const value = this.getAnomalyMetricValue(
+					condition.metric,
+					updated,
+					latencyMs,
+					costUsd,
+					span,
+				);
 				const key: BaselineKey = {
 					model: String(span.attributes["gen_ai.request.model"] ?? "unknown"),
 					tool: String(span.attributes["ho.tool.name"] ?? "unknown"),

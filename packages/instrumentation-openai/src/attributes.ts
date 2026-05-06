@@ -51,9 +51,7 @@ export function responseAttributes(response: Record<string, unknown>): Attribute
 
 	const choices = response.choices as Array<Record<string, unknown>> | undefined;
 	if (choices?.length) {
-		const reasons = choices
-			.map((c) => c.finish_reason as string)
-			.filter(Boolean);
+		const reasons = choices.map((c) => c.finish_reason as string).filter(Boolean);
 		if (reasons.length) {
 			attrs["gen_ai.response.finish_reasons"] = reasons;
 		}

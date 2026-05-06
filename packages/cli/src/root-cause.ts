@@ -73,7 +73,7 @@ async function loadSpansFromFile(
 function isErrorSpan(span: SpanRecord): boolean {
 	if (span.status?.code === 2) return true;
 	const attrs = span.attributes ?? {};
-	return attrs["error"] !== undefined || attrs["otel.status_code"] === "ERROR";
+	return attrs.error !== undefined || attrs["otel.status_code"] === "ERROR";
 }
 
 function getErrorMessage(span: SpanRecord): string {
@@ -86,19 +86,18 @@ function getErrorMessage(span: SpanRecord): string {
 
 function getTokens(span: SpanRecord): number {
 	const attrs = span.attributes ?? {};
-	const input = typeof attrs["gen_ai.usage.input_tokens"] === "number"
-		? attrs["gen_ai.usage.input_tokens"] as number
-		: 0;
-	const output = typeof attrs["gen_ai.usage.output_tokens"] === "number"
-		? attrs["gen_ai.usage.output_tokens"] as number
-		: 0;
+	const input =
+		typeof attrs["gen_ai.usage.input_tokens"] === "number"
+			? (attrs["gen_ai.usage.input_tokens"] as number)
+			: 0;
+	const output =
+		typeof attrs["gen_ai.usage.output_tokens"] === "number"
+			? (attrs["gen_ai.usage.output_tokens"] as number)
+			: 0;
 	return input + output;
 }
 
-export function analyzeTrace(
-	traceId: string,
-	spans: readonly SpanRecord[],
-): RootCauseResult {
+export function analyzeTrace(traceId: string, spans: readonly SpanRecord[]): RootCauseResult {
 	const sorted = [...spans].sort((a, b) => a.startTimeUnixNano - b.startTimeUnixNano);
 
 	let triggerSpan: RootCauseResult["triggerSpan"] = undefined;

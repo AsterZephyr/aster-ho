@@ -17,7 +17,10 @@ export class Aggregator {
 	private readonly metricBuckets = new Map<string, number[]>();
 
 	configureBuckets(metricName: string, buckets: readonly number[]): void {
-		this.metricBuckets.set(metricName, [...buckets].sort((a, b) => a - b));
+		this.metricBuckets.set(
+			metricName,
+			[...buckets].sort((a, b) => a - b),
+		);
 	}
 
 	push(samples: MetricSample[]): void {
@@ -29,7 +32,11 @@ export class Aggregator {
 				this.counters.set(key, { value: (existing?.value ?? 0) + sample.value });
 			} else {
 				const buckets = this.metricBuckets.get(sample.name) ?? this.defaultBuckets;
-				const existing = this.histograms.get(key) ?? { sum: 0, count: 0, buckets: new Map<number, number>() };
+				const existing = this.histograms.get(key) ?? {
+					sum: 0,
+					count: 0,
+					buckets: new Map<number, number>(),
+				};
 
 				const updated: AggregatedHistogram = {
 					sum: existing.sum + sample.value,
@@ -73,7 +80,7 @@ export class Aggregator {
 			lines.push(`${fullName}_count${formatLabels(labels)} ${hist.count}`);
 		}
 
-		return lines.join("\n") + "\n";
+		return `${lines.join("\n")}\n`;
 	}
 
 	private makeKey(name: string, labels: Record<string, string>): string {
