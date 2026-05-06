@@ -1,4 +1,5 @@
-export { init, shutdown } from "./init.js";
+export { init, shutdown, HoConfigError } from "./init.js";
+export { validateConfig } from "./config-schema.js";
 export { withSpan } from "./with-span.js";
 export {
 	withAgentLoop,

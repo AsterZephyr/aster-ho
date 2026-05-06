@@ -44,5 +44,16 @@ export function initializeSchema(db: Database.Database): void {
 			ticket_id TEXT,
 			ticket_url TEXT
 		);
+
+		CREATE TABLE IF NOT EXISTS alert_windows (
+			rule_name TEXT PRIMARY KEY,
+			window_json TEXT NOT NULL,
+			updated_at_ms INTEGER NOT NULL
+		);
+
+		CREATE TABLE IF NOT EXISTS alert_cooldowns (
+			rule_name TEXT PRIMARY KEY,
+			last_fired_ms INTEGER NOT NULL
+		);
 	`);
 }

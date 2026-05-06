@@ -13,6 +13,7 @@ export interface HoConfig {
 	exporters?: SpanExporter[];
 	dev?: boolean;
 	captureContent?: CaptureContentConfig;
+	autoShutdown?: boolean;
 }
 
 export interface CaptureContentConfig {

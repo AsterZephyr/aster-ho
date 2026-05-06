@@ -1,0 +1,166 @@
+{
+	"uid": "ho-context-rot",
+	"title": "Ho: Context Rot",
+	"tags": ["ho", "observability"],
+	"timezone": "browser",
+	"schemaVersion": 39,
+	"version": 1,
+	"refresh": "30s",
+	"time": {
+		"from": "now-1h",
+		"to": "now"
+	},
+	"templating": {
+		"list": [
+			{
+				"name": "model",
+				"type": "query",
+				"datasource": { "type": "prometheus", "uid": "prometheus" },
+				"query": "label_values(ho_context_rot_count, model)",
+				"refresh": 2,
+				"includeAll": true,
+				"multi": true,
+				"current": { "text": "All", "value": "$__all" }
+			},
+			{
+				"name": "service",
+				"type": "query",
+				"datasource": { "type": "prometheus", "uid": "prometheus" },
+				"query": "label_values(ho_context_rot_count, service)",
+				"refresh": 2,
+				"includeAll": true,
+				"multi": true,
+				"current": { "text": "All", "value": "$__all" }
+			}
+		]
+	},
+	"panels": [
+		{
+			"type": "row",
+			"title": "Rot Events by Type",
+			"gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+			"collapsed": false
+		},
+		{
+			"type": "stat",
+			"title": "Total Rot Events (last hour)",
+			"gridPos": { "h": 4, "w": 6, "x": 0, "y": 1 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"fieldConfig": {
+				"defaults": {
+					"unit": "short",
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{ "color": "green", "value": null },
+							{ "color": "yellow", "value": 10 },
+							{ "color": "red", "value": 50 }
+						]
+					}
+				},
+				"overrides": []
+			},
+			"targets": [
+				{
+					"expr": "sum(increase(ho_context_rot_count{model=~\"$model\", service=~\"$service\"}[1h]))",
+					"legendFormat": "total",
+					"refId": "A"
+				}
+			]
+		},
+		{
+			"type": "piechart",
+			"title": "Rot Events by Type",
+			"gridPos": { "h": 8, "w": 8, "x": 6, "y": 1 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"fieldConfig": {
+				"defaults": { "unit": "short" },
+				"overrides": []
+			},
+			"targets": [
+				{
+					"expr": "sum(increase(ho_context_rot_count{model=~\"$model\", service=~\"$service\"}[1h])) by (type)",
+					"legendFormat": "{{type}}",
+					"refId": "A"
+				}
+			]
+		},
+		{
+			"type": "bargauge",
+			"title": "Rot Rate by Type",
+			"gridPos": { "h": 8, "w": 10, "x": 14, "y": 1 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"fieldConfig": {
+				"defaults": {
+					"unit": "ops",
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{ "color": "green", "value": null },
+							{ "color": "yellow", "value": 0.01 },
+							{ "color": "red", "value": 0.1 }
+						]
+					}
+				},
+				"overrides": []
+			},
+			"options": {
+				"orientation": "horizontal",
+				"displayMode": "gradient"
+			},
+			"targets": [
+				{
+					"expr": "sum(rate(ho_context_rot_count{model=~\"$model\", service=~\"$service\"}[$__rate_interval])) by (type)",
+					"legendFormat": "{{type}}",
+					"refId": "A"
+				}
+			]
+		},
+		{
+			"type": "row",
+			"title": "Rot Events Over Time",
+			"gridPos": { "h": 1, "w": 24, "x": 0, "y": 9 },
+			"collapsed": false
+		},
+		{
+			"type": "timeseries",
+			"title": "Context Rot Events Over Time",
+			"gridPos": { "h": 10, "w": 24, "x": 0, "y": 10 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"fieldConfig": {
+				"defaults": {
+					"unit": "ops",
+					"custom": { "drawStyle": "line", "fillOpacity": 15, "stacking": { "mode": "normal" } }
+				},
+				"overrides": []
+			},
+			"targets": [
+				{
+					"expr": "sum(rate(ho_context_rot_count{model=~\"$model\", service=~\"$service\"}[$__rate_interval])) by (type)",
+					"legendFormat": "{{type}}",
+					"refId": "A"
+				}
+			]
+		},
+		{
+			"type": "timeseries",
+			"title": "Context Rot Events by Model",
+			"gridPos": { "h": 10, "w": 24, "x": 0, "y": 20 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"fieldConfig": {
+				"defaults": {
+					"unit": "ops",
+					"custom": { "drawStyle": "line", "fillOpacity": 10 }
+				},
+				"overrides": []
+			},
+			"targets": [
+				{
+					"expr": "sum(rate(ho_context_rot_count{model=~\"$model\", service=~\"$service\"}[$__rate_interval])) by (model)",
+					"legendFormat": "{{model}}",
+					"refId": "A"
+				}
+			]
+		}
+	]
+}

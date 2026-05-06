@@ -7,11 +7,13 @@ import {
 } from "@opentelemetry/sdk-trace-base";
 import { NodeTracerProvider } from "@opentelemetry/sdk-trace-node";
 import { ATTR_SERVICE_NAME } from "@opentelemetry/semantic-conventions";
+import { HoConfigError, validateConfig } from "./config-schema.js";
 import { EnrichingExporter } from "./enriching-exporter.js";
 import type { HoConfig } from "./types.js";
 
 let _provider: NodeTracerProvider | undefined;
 let _instrumentations: Instrumentation[] = [];
+let _shutdownHandlers: (() => void)[] = [];
 
 const DEFAULT_BATCH_CONFIG = {
 	maxQueueSize: 2048,
@@ -21,6 +23,8 @@ const DEFAULT_BATCH_CONFIG = {
 };
 
 export function init(config: HoConfig = {}): void {
+	validateConfig(config);
+
 	const resource = resourceFromAttributes({
 		[ATTR_SERVICE_NAME]: config.serviceName ?? "ho-agent",
 	});
@@ -50,9 +54,24 @@ export function init(config: HoConfig = {}): void {
 		instr.setTracerProvider(_provider);
 		instr.enable();
 	}
+
+	if (config.autoShutdown !== false) {
+		const handler = () => {
+			shutdown();
+		};
+		process.on("SIGINT", handler);
+		process.on("SIGTERM", handler);
+		_shutdownHandlers = [handler];
+	}
 }
 
 export async function shutdown(): Promise<void> {
+	for (const handler of _shutdownHandlers) {
+		process.removeListener("SIGINT", handler);
+		process.removeListener("SIGTERM", handler);
+	}
+	_shutdownHandlers = [];
+
 	for (const instr of _instrumentations) {
 		instr.disable();
 	}
@@ -63,3 +82,5 @@ export async function shutdown(): Promise<void> {
 		_provider = undefined;
 	}
 }
+
+export { HoConfigError };

@@ -1,0 +1,34 @@
+# Grafana provisioning config for Ho dashboards
+# Place this file (or symlink) in /etc/grafana/provisioning/dashboards/ho.yaml
+
+apiVersion: 1
+
+providers:
+  - name: ho-dashboards
+    orgId: 1
+    folder: Ho
+    type: file
+    disableDeletion: false
+    editable: true
+    updateIntervalSeconds: 30
+    options:
+      path: /var/lib/grafana/dashboards/ho
+      foldersFromFilesStructure: false
+
+---
+# Datasource provisioning
+# Place this file (or symlink) in /etc/grafana/provisioning/datasources/prometheus.yaml
+
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    uid: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    editable: true
+    jsonData:
+      timeInterval: "15s"
+      httpMethod: POST

@@ -1,0 +1,204 @@
+{
+	"uid": "ho-baselines-anomalies",
+	"title": "Ho: Baselines & Anomalies",
+	"tags": ["ho", "observability"],
+	"timezone": "browser",
+	"schemaVersion": 39,
+	"version": 1,
+	"refresh": "30s",
+	"time": {
+		"from": "now-1h",
+		"to": "now"
+	},
+	"templating": {
+		"list": [
+			{
+				"name": "model",
+				"type": "query",
+				"datasource": { "type": "prometheus", "uid": "prometheus" },
+				"query": "label_values(ho_span_count, model)",
+				"refresh": 2,
+				"includeAll": true,
+				"multi": true,
+				"current": { "text": "All", "value": "$__all" }
+			},
+			{
+				"name": "tool",
+				"type": "query",
+				"datasource": { "type": "prometheus", "uid": "prometheus" },
+				"query": "label_values(ho_span_count, tool)",
+				"refresh": 2,
+				"includeAll": true,
+				"multi": true,
+				"current": { "text": "All", "value": "$__all" }
+			},
+			{
+				"name": "service",
+				"type": "query",
+				"datasource": { "type": "prometheus", "uid": "prometheus" },
+				"query": "label_values(ho_span_count, service)",
+				"refresh": 2,
+				"includeAll": true,
+				"multi": true,
+				"current": { "text": "All", "value": "$__all" }
+			}
+		]
+	},
+	"panels": [
+		{
+			"type": "row",
+			"title": "Latency Trend",
+			"gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+			"collapsed": false
+		},
+		{
+			"type": "timeseries",
+			"title": "P95 Latency Over Time",
+			"gridPos": { "h": 8, "w": 12, "x": 0, "y": 1 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"fieldConfig": {
+				"defaults": {
+					"unit": "s",
+					"custom": { "drawStyle": "line", "fillOpacity": 5 }
+				},
+				"overrides": []
+			},
+			"targets": [
+				{
+					"expr": "histogram_quantile(0.95, sum(rate(ho_span_duration_seconds_bucket{model=~\"$model\", service=~\"$service\"}[$__rate_interval])) by (le))",
+					"legendFormat": "p95 current",
+					"refId": "A"
+				},
+				{
+					"expr": "histogram_quantile(0.95, sum(rate(ho_span_duration_seconds_bucket{model=~\"$model\", service=~\"$service\"}[$__rate_interval] offset 1d)) by (le))",
+					"legendFormat": "p95 (1d ago)",
+					"refId": "B"
+				}
+			]
+		},
+		{
+			"type": "timeseries",
+			"title": "P95 Latency by Model",
+			"gridPos": { "h": 8, "w": 12, "x": 12, "y": 1 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"fieldConfig": {
+				"defaults": {
+					"unit": "s",
+					"custom": { "drawStyle": "line", "fillOpacity": 5 }
+				},
+				"overrides": []
+			},
+			"targets": [
+				{
+					"expr": "histogram_quantile(0.95, sum(rate(ho_span_duration_seconds_bucket{model=~\"$model\", service=~\"$service\"}[$__rate_interval])) by (le, model))",
+					"legendFormat": "{{model}}",
+					"refId": "A"
+				}
+			]
+		},
+		{
+			"type": "row",
+			"title": "Error Rate Trend",
+			"gridPos": { "h": 1, "w": 24, "x": 0, "y": 9 },
+			"collapsed": false
+		},
+		{
+			"type": "timeseries",
+			"title": "Error Rate Over Time",
+			"gridPos": { "h": 8, "w": 12, "x": 0, "y": 10 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"fieldConfig": {
+				"defaults": {
+					"unit": "percentunit",
+					"custom": { "drawStyle": "line", "fillOpacity": 10 },
+					"min": 0,
+					"max": 1
+				},
+				"overrides": []
+			},
+			"targets": [
+				{
+					"expr": "sum(rate(ho_error_count{model=~\"$model\", service=~\"$service\"}[$__rate_interval])) / sum(rate(ho_span_count{model=~\"$model\", service=~\"$service\"}[$__rate_interval]))",
+					"legendFormat": "error ratio",
+					"refId": "A"
+				},
+				{
+					"expr": "sum(rate(ho_error_count{model=~\"$model\", service=~\"$service\"}[$__rate_interval] offset 1d)) / sum(rate(ho_span_count{model=~\"$model\", service=~\"$service\"}[$__rate_interval] offset 1d))",
+					"legendFormat": "error ratio (1d ago)",
+					"refId": "B"
+				}
+			]
+		},
+		{
+			"type": "timeseries",
+			"title": "Error Rate by Category",
+			"gridPos": { "h": 8, "w": 12, "x": 12, "y": 10 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"fieldConfig": {
+				"defaults": {
+					"unit": "ops",
+					"custom": { "drawStyle": "line", "fillOpacity": 10, "stacking": { "mode": "normal" } }
+				},
+				"overrides": []
+			},
+			"targets": [
+				{
+					"expr": "sum(rate(ho_error_count{model=~\"$model\", service=~\"$service\"}[$__rate_interval])) by (category)",
+					"legendFormat": "{{category}}",
+					"refId": "A"
+				}
+			]
+		},
+		{
+			"type": "row",
+			"title": "Token Usage Trend",
+			"gridPos": { "h": 1, "w": 24, "x": 0, "y": 18 },
+			"collapsed": false
+		},
+		{
+			"type": "timeseries",
+			"title": "Total Tokens Over Time (input + output)",
+			"gridPos": { "h": 8, "w": 12, "x": 0, "y": 19 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"fieldConfig": {
+				"defaults": {
+					"unit": "short",
+					"custom": { "drawStyle": "line", "fillOpacity": 10 }
+				},
+				"overrides": []
+			},
+			"targets": [
+				{
+					"expr": "sum(rate(ho_input_tokens_total{model=~\"$model\", service=~\"$service\"}[$__rate_interval])) + sum(rate(ho_output_tokens_total{model=~\"$model\", service=~\"$service\"}[$__rate_interval]))",
+					"legendFormat": "tokens/s (current)",
+					"refId": "A"
+				},
+				{
+					"expr": "(sum(rate(ho_input_tokens_total{model=~\"$model\", service=~\"$service\"}[$__rate_interval] offset 1d)) + sum(rate(ho_output_tokens_total{model=~\"$model\", service=~\"$service\"}[$__rate_interval] offset 1d)))",
+					"legendFormat": "tokens/s (1d ago)",
+					"refId": "B"
+				}
+			]
+		},
+		{
+			"type": "timeseries",
+			"title": "Token Usage by Model",
+			"gridPos": { "h": 8, "w": 12, "x": 12, "y": 19 },
+			"datasource": { "type": "prometheus", "uid": "prometheus" },
+			"fieldConfig": {
+				"defaults": {
+					"unit": "short",
+					"custom": { "drawStyle": "line", "fillOpacity": 10, "stacking": { "mode": "normal" } }
+				},
+				"overrides": []
+			},
+			"targets": [
+				{
+					"expr": "sum(rate(ho_input_tokens_total{model=~\"$model\", service=~\"$service\"}[$__rate_interval])) by (model) + sum(rate(ho_output_tokens_total{model=~\"$model\", service=~\"$service\"}[$__rate_interval])) by (model)",
+					"legendFormat": "{{model}}",
+					"refId": "A"
+				}
+			]
+		}
+	]
+}
